@@ -87,7 +87,7 @@
                 <label class="block text-yellow-400 mb-1 font-semibold text-xs"><i class="fa-solid fa-star"></i> Tema / Hari Raya</label>
                 <select id="holidaySelect" class="w-full bg-slate-900 text-yellow-200 border border-yellow-600 rounded p-2 outline-none focus:border-yellow-400 cursor-pointer">
                     <option value="NONE">❌ Tidak Ada (Hari Biasa)</option>
-                    <option value="RANDOM_HOLIDAY">🎲 Acak Hari Raya</option>
+                    <option value="RANDOM_HOLIDAY">🎲 Acak (Termasuk Hari Biasa)</option>
                     <option value="EID">Idul Fitri (Lebaran)</option>
                     <option value="CHRISTMAS">Natal (Christmas)</option>
                     <option value="IMLEK">Imlek (Lunar New Year)</option>
@@ -867,9 +867,15 @@
                 numSubjects = 2;
             }
 
+            // 2. Logika Tema Hari Raya (Override System) DIPERBAIKI
             let activeHoliday = holidayVal;
             if (activeHoliday === "RANDOM_HOLIDAY") {
-                activeHoliday = getRandom(Object.keys(holidayDB));
+                // 70% Peluang Hari Biasa (Normal), 30% Peluang Hari Raya Acak
+                if (Math.random() < 0.7) {
+                    activeHoliday = null; // Menjadi Hari Biasa
+                } else {
+                    activeHoliday = getRandom(Object.keys(holidayDB));
+                }
             } else if (activeHoliday === "NONE") {
                 activeHoliday = null;
             }
