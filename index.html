@@ -244,13 +244,19 @@
                 <input type="number" id="strictWeight" min="0.1" max="1.0" step="0.1" value="1.0" class="w-full bg-slate-900 text-slate-200 border border-red-600 rounded p-2 outline-none focus:border-red-500 transition-colors">
             </div>
             <div class="col-span-1 sm:col-span-2">
-                <label class="block text-green-400 mb-1 font-semibold text-xs"><i class="fa-solid fa-user-tag"></i> Artis/Tokoh Utama (Opsional)</label>
+                <label class="flex justify-between items-center text-green-400 mb-1 font-semibold text-xs transition-colors">
+                    <span><i class="fa-solid fa-user-tag"></i> Artis/Tokoh Utama</span>
+                    <i class="fa-solid fa-lock-open cursor-pointer hover:text-white" onclick="toggleLock('customNameGlobal', this)"></i>
+                </label>
                 <input type="text" id="customNameGlobal" oninput="handleGlobalNameInput()" placeholder="Cth: Reza Rahadian" class="w-full bg-slate-900 text-green-300 border border-green-700 rounded p-2 outline-none focus:border-green-500 transition-colors placeholder-slate-500">
             </div>
             
             <!-- Skenario Spesifik Container (Hanya muncul jika Tipe Shot = Posed/Scenario) -->
             <div id="scenarioContainer" class="hidden col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-5 xl:col-span-7 mt-2">
-                <label class="block text-green-400 mb-1 font-semibold text-xs"><i class="fa-solid fa-clapperboard"></i> Skenario / Pose Spesifik (Opsional)</label>
+                <label class="flex justify-between items-center text-green-400 mb-1 font-semibold text-xs transition-colors">
+                    <span><i class="fa-solid fa-clapperboard"></i> Skenario / Pose Spesifik (Opsional)</span>
+                    <i class="fa-solid fa-lock-open cursor-pointer hover:text-white" onclick="toggleLock('customScenarioInput', this)"></i>
+                </label>
                 <input type="text" id="customScenarioInput" placeholder="Cth: Selfie santai ngopi bareng Vladimir Putin dan Donald Trump di Warkop lokal" class="w-full bg-slate-900 text-green-300 border border-green-700 rounded p-2 outline-none focus:border-green-500 transition-colors placeholder-slate-500">
             </div>
         </div>
@@ -860,17 +866,23 @@
             if (isLocked) {
                 el.dataset.locked = "false";
                 if(iconEl) {
-                    iconEl.classList.remove('fa-lock');
+                    iconEl.classList.remove('fa-lock', 'text-red-500');
                     iconEl.classList.add('fa-lock-open');
                     if(iconEl.parentElement) iconEl.parentElement.classList.remove('locked-label');
                 }
+                el.classList.remove('border-red-500');
+                if(el.tagName === 'INPUT') el.classList.add('border-green-700');
+                else el.classList.add('border-slate-600');
             } else {
                 el.dataset.locked = "true";
                 if(iconEl) {
                     iconEl.classList.remove('fa-lock-open');
-                    iconEl.classList.add('fa-lock');
+                    iconEl.classList.add('fa-lock', 'text-red-500');
                     if(iconEl.parentElement) iconEl.parentElement.classList.add('locked-label');
                 }
+                if(el.tagName === 'INPUT') el.classList.remove('border-green-700');
+                else el.classList.remove('border-slate-600');
+                el.classList.add('border-red-500');
             }
         }
 
@@ -921,44 +933,107 @@
             
             if (!numEl || !genderEl || !container) return;
 
+            // 1. Ambil state (nilai & status gembok) dari baris yang sudah ada
+            let savedState = [];
+            const existingRows = container.children.length;
+            for(let i=0; i<existingRows; i++) {
+                let state = {};
+                ['name', 'gender', 'age', 'demo'].forEach(f => {
+                    const el = document.getElementById(`adv_${f}_${i}`);
+                    if (el) {
+                        state[f] = { value: el.value, locked: el.dataset.locked === "true" };
+                    }
+                });
+                savedState.push(state);
+            }
+
             const numVal = numEl.value;
             const genderVal = genderEl.value;
             let num = numVal === "RANDOM" ? Math.floor(Math.random() * 6) + 1 : parseInt(numVal);
             if (genderVal === "COUPLE") num = 2;
 
             container.innerHTML = "";
-            let demoOptions = demographics.map(d => `<option value="${d}">${d}</option>`).join('');
+            const getDemoOptions = (selectedVal) => {
+                return demographics.map(d => `<option value="${d}" ${d===selectedVal ? 'selected' : ''}>${d}</option>`).join('');
+            };
 
             for(let i=0; i<num; i++) {
                 let defaultGender = "RANDOM";
                 if(genderVal === "COUPLE") defaultGender = i===0 ? "MALE" : "FEMALE";
                 else if (genderVal !== "RANDOM" && genderVal !== "COUPLE") defaultGender = genderVal;
                 
+                let nameVal = "", nameLocked = false;
+                let genVal = defaultGender, genLocked = false;
+                let ageVal = "RANDOM", ageLocked = false;
+                let demoVal = "RANDOM", demoLocked = false;
+
+                // Terapkan kembali state yang tersimpan jika ada
+                if (savedState[i]) {
+                    if (savedState[i].name) { nameVal = savedState[i].name.value; nameLocked = savedState[i].name.locked; }
+                    if (savedState[i].gender) { 
+                        if(savedState[i].gender.locked || savedState[i].gender.value !== "RANDOM") genVal = savedState[i].gender.value; 
+                        genLocked = savedState[i].gender.locked; 
+                    }
+                    if (savedState[i].age) { ageVal = savedState[i].age.value; ageLocked = savedState[i].age.locked; }
+                    if (savedState[i].demo) { demoVal = savedState[i].demo.value; demoLocked = savedState[i].demo.locked; }
+                }
+
                 let row = `
                 <div class="bg-slate-900/80 p-3 rounded border border-slate-600 shadow-md flex flex-col gap-2">
                     <div class="font-bold text-red-400 border-b border-slate-700 pb-1">Orang ${i+1}</div>
-                    <input type="text" id="adv_name_${i}" oninput="handleAdvancedNameInput(${i})" placeholder="Nama Artis (Opsional)" class="w-full bg-slate-800 text-green-300 border border-green-700 rounded p-1.5 text-xs outline-none focus:border-green-500 placeholder-slate-500 transition-colors">
-                    <div class="space-y-2">
-                        <select id="adv_gender_${i}" class="w-full bg-slate-800 text-slate-200 border border-slate-600 rounded p-1.5 text-xs outline-none transition-colors">
-                            <option value="RANDOM" ${defaultGender==="RANDOM"?"selected":""}>🎲 Acak Gender</option>
-                            <option value="MALE" ${defaultGender==="MALE"?"selected":""}>Pria</option>
-                            <option value="FEMALE" ${defaultGender==="FEMALE"?"selected":""}>Wanita</option>
-                        </select>
-                        <select id="adv_age_${i}" class="w-full bg-slate-800 text-slate-200 border border-slate-600 rounded p-1.5 text-xs outline-none transition-colors">
-                            <option value="RANDOM">🎲 Acak Usia</option>
-                            <option value="TEENAGER">Remaja (13-19)</option>
-                            <option value="YOUNG_ADULT">Dewasa Muda (20-29)</option>
-                            <option value="ADULT">Dewasa (30-40)</option>
-                            <option value="MATURE">Paruh Baya (40+)</option>
-                        </select>
-                        <select id="adv_demo_${i}" class="w-full bg-slate-800 text-slate-200 border border-slate-600 rounded p-1.5 text-xs outline-none transition-colors">
-                            <option value="RANDOM">🎲 Acak Ras/Demografi</option>
-                            ${demoOptions}
-                        </select>
+                    
+                    <div>
+                        <label class="flex justify-between items-center text-slate-400 mb-1 text-[10px] ${nameLocked ? 'locked-label' : ''}">
+                            <span>Nama Artis (Ops)</span>
+                            <i class="fa-solid ${nameLocked ? 'fa-lock text-red-500' : 'fa-lock-open'} cursor-pointer hover:text-white" onclick="toggleLock('adv_name_${i}', this)"></i>
+                        </label>
+                        <input type="text" id="adv_name_${i}" data-locked="${nameLocked}" value="${nameVal}" oninput="handleAdvancedNameInput(${i})" placeholder="Nama Artis..." class="w-full bg-slate-800 text-green-300 border ${nameLocked ? 'border-red-500' : 'border-green-700'} rounded p-1.5 text-xs outline-none focus:border-green-500 placeholder-slate-500 transition-colors">
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-2">
+                        <div>
+                            <label class="flex justify-between items-center text-slate-400 mb-1 text-[10px] ${genLocked ? 'locked-label' : ''}">
+                                <span>Gender</span>
+                                <i class="fa-solid ${genLocked ? 'fa-lock text-red-500' : 'fa-lock-open'} cursor-pointer hover:text-white" onclick="toggleLock('adv_gender_${i}', this)"></i>
+                            </label>
+                            <select id="adv_gender_${i}" data-locked="${genLocked}" class="w-full bg-slate-800 text-slate-200 border ${genLocked ? 'border-red-500' : 'border-slate-600'} rounded p-1.5 text-xs outline-none transition-colors">
+                                <option value="RANDOM" ${genVal==="RANDOM"?"selected":""}>🎲 Acak</option>
+                                <option value="MALE" ${genVal==="MALE"?"selected":""}>Pria</option>
+                                <option value="FEMALE" ${genVal==="FEMALE"?"selected":""}>Wanita</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="flex justify-between items-center text-slate-400 mb-1 text-[10px] ${ageLocked ? 'locked-label' : ''}">
+                                <span>Usia</span>
+                                <i class="fa-solid ${ageLocked ? 'fa-lock text-red-500' : 'fa-lock-open'} cursor-pointer hover:text-white" onclick="toggleLock('adv_age_${i}', this)"></i>
+                            </label>
+                            <select id="adv_age_${i}" data-locked="${ageLocked}" class="w-full bg-slate-800 text-slate-200 border ${ageLocked ? 'border-red-500' : 'border-slate-600'} rounded p-1.5 text-xs outline-none transition-colors">
+                                <option value="RANDOM" ${ageVal==="RANDOM"?"selected":""}>🎲 Acak</option>
+                                <option value="TEENAGER" ${ageVal==="TEENAGER"?"selected":""}>Remaja</option>
+                                <option value="YOUNG_ADULT" ${ageVal==="YOUNG_ADULT"?"selected":""}>Dewasa Muda</option>
+                                <option value="ADULT" ${ageVal==="ADULT"?"selected":""}>Dewasa</option>
+                                <option value="MATURE" ${ageVal==="MATURE"?"selected":""}>Paruh Baya</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="flex justify-between items-center text-slate-400 mb-1 text-[10px] ${demoLocked ? 'locked-label' : ''}">
+                                <span>Ras</span>
+                                <i class="fa-solid ${demoLocked ? 'fa-lock text-red-500' : 'fa-lock-open'} cursor-pointer hover:text-white" onclick="toggleLock('adv_demo_${i}', this)"></i>
+                            </label>
+                            <select id="adv_demo_${i}" data-locked="${demoLocked}" class="w-full bg-slate-800 text-slate-200 border ${demoLocked ? 'border-red-500' : 'border-slate-600'} rounded p-1.5 text-xs outline-none transition-colors">
+                                <option value="RANDOM" ${demoVal==="RANDOM"?"selected":""}>🎲 Acak</option>
+                                ${getDemoOptions(demoVal)}
+                            </select>
+                        </div>
                     </div>
                 </div>
                 `;
                 container.innerHTML += row;
+            }
+            
+            // Setel state disable jika nama terisi
+            for(let i=0; i<num; i++) {
+                handleAdvancedNameInput(i);
             }
         }
 
@@ -1365,6 +1440,7 @@
         function resetAndGenerate() {
             const dropdownIds = ['numSelect', 'ageSelect', 'holidaySelect', 'eraSelect', 'genderSelect', 'demoSelect', 'shotSelect', 'locSelect', 'timeSelect', 'weatherSelect', 'aestheticSelect', 'strictSelect', 'bodyTypeSelect', 'hairAccSelect'];
             
+            // 1. Reset Global Fields
             dropdownIds.forEach(id => {
                 const el = document.getElementById(id);
                 if (el && el.dataset.locked !== "true") {
@@ -1377,12 +1453,14 @@
             });
 
             const globalNameInput = document.getElementById('customNameGlobal');
-            if (globalNameInput) {
+            if (globalNameInput && globalNameInput.dataset.locked !== "true") {
                 globalNameInput.value = "";
                 handleGlobalNameInput();
             }
             const customScenarioInput = document.getElementById('customScenarioInput');
-            if (customScenarioInput) customScenarioInput.value = "";
+            if (customScenarioInput && customScenarioInput.dataset.locked !== "true") {
+                customScenarioInput.value = "";
+            }
             toggleScenarioInput(); 
             
             const eraSelect = document.getElementById('eraSelect');
@@ -1391,8 +1469,28 @@
                 eraSelect.classList.remove('opacity-50', 'cursor-not-allowed');
             }
 
+            // 2. Reset Advanced Panel Fields
             const advToggle = document.getElementById('advancedToggle');
-            if(advToggle && advToggle.checked) renderAdvancedRows();
+            if(advToggle && advToggle.checked) {
+                const container = document.getElementById('characterRows');
+                if (container) {
+                    const rows = container.children.length;
+                    for(let i=0; i<rows; i++) {
+                        const nameEl = document.getElementById(`adv_name_${i}`);
+                        if (nameEl && nameEl.dataset.locked !== "true") nameEl.value = "";
+                        
+                        const genEl = document.getElementById(`adv_gender_${i}`);
+                        if (genEl && genEl.dataset.locked !== "true") genEl.value = "RANDOM";
+                        
+                        const ageEl = document.getElementById(`adv_age_${i}`);
+                        if (ageEl && ageEl.dataset.locked !== "true") ageEl.value = "RANDOM";
+                        
+                        const demoEl = document.getElementById(`adv_demo_${i}`);
+                        if (demoEl && demoEl.dataset.locked !== "true") demoEl.value = "RANDOM";
+                    }
+                }
+                renderAdvancedRows();
+            }
 
             generatePrompt();
         }
