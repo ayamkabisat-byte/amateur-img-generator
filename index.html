@@ -270,6 +270,7 @@
             </label>
         </div>
 
+        <!-- NEW: Desain Ulang Advanced Panel (Lock Menyatu) -->
         <div id="advancedPanel" class="hidden w-full max-w-7xl mx-auto bg-slate-800/80 p-5 rounded-xl border border-red-900/50 shadow-inner text-sm mb-8">
             <h3 class="text-red-400 font-bold border-b border-red-900/50 pb-2 mb-4"><i class="fa-solid fa-users-viewfinder"></i> Kustomisasi Karakter Independen</h3>
             <div id="characterRows" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
@@ -665,7 +666,6 @@
                 else genderStr = "MALE";
             }
 
-            // Body type logic
             let bodyTypeDesc = "";
             if (bodyTypeVal && bodyTypeVal !== "MATCH" && bodyTypeVal !== "RANDOM") {
                 bodyTypeDesc = bodyTypeVal + " ";
@@ -683,9 +683,7 @@
                 subjectName = subjectName.replace("WOMAN/GIRL", "WOMAN").replace("MAN/BOY", "MAN");
             }
 
-            // Cleanup double spaces
             subjectName = subjectName.replace(/\s+/g, ' ').trim();
-
             return { genderId: genderStr, subjectName: subjectName };
         }
 
@@ -867,8 +865,8 @@
                 el.dataset.locked = "false";
                 if(iconEl) {
                     iconEl.classList.remove('fa-lock', 'text-red-500');
-                    iconEl.classList.add('fa-lock-open');
-                    if(iconEl.parentElement) iconEl.parentElement.classList.remove('locked-label');
+                    iconEl.classList.add('fa-lock-open', 'text-slate-500'); 
+                    if(iconEl.parentElement && iconEl.parentElement.tagName === 'LABEL') iconEl.parentElement.classList.remove('locked-label');
                 }
                 el.classList.remove('border-red-500');
                 if(el.tagName === 'INPUT') el.classList.add('border-green-700');
@@ -876,9 +874,9 @@
             } else {
                 el.dataset.locked = "true";
                 if(iconEl) {
-                    iconEl.classList.remove('fa-lock-open');
+                    iconEl.classList.remove('fa-lock-open', 'text-slate-500');
                     iconEl.classList.add('fa-lock', 'text-red-500');
-                    if(iconEl.parentElement) iconEl.parentElement.classList.add('locked-label');
+                    if(iconEl.parentElement && iconEl.parentElement.tagName === 'LABEL') iconEl.parentElement.classList.add('locked-label');
                 }
                 if(el.tagName === 'INPUT') el.classList.remove('border-green-700');
                 else el.classList.remove('border-slate-600');
@@ -926,6 +924,7 @@
             }
         }
 
+        // FUNGSI RENDER ULANG DENGAN DESAIN BARU PANEL ADVANCED
         function renderAdvancedRows() {
             const numEl = document.getElementById('numSelect');
             const genderEl = document.getElementById('genderSelect');
@@ -933,7 +932,7 @@
             
             if (!numEl || !genderEl || !container) return;
 
-            // 1. Ambil state (nilai & status gembok) dari baris yang sudah ada
+            // Simpan status gembok dan nilai yang ada sebelum merender ulang
             let savedState = [];
             const existingRows = container.children.length;
             for(let i=0; i<existingRows; i++) {
@@ -967,7 +966,7 @@
                 let ageVal = "RANDOM", ageLocked = false;
                 let demoVal = "RANDOM", demoLocked = false;
 
-                // Terapkan kembali state yang tersimpan jika ada
+                // Terapkan nilai dan gembok yang tersimpan
                 if (savedState[i]) {
                     if (savedState[i].name) { nameVal = savedState[i].name.value; nameLocked = savedState[i].name.locked; }
                     if (savedState[i].gender) { 
@@ -978,60 +977,49 @@
                     if (savedState[i].demo) { demoVal = savedState[i].demo.value; demoLocked = savedState[i].demo.locked; }
                 }
 
+                // DESAIN BARU: Ikon Gembok Berada di Sebelah Kanan Pilihan (Satu Baris Fleksibel)
                 let row = `
                 <div class="bg-slate-900/80 p-3 rounded border border-slate-600 shadow-md flex flex-col gap-2">
                     <div class="font-bold text-red-400 border-b border-slate-700 pb-1">Orang ${i+1}</div>
                     
-                    <div>
-                        <label class="flex justify-between items-center text-slate-400 mb-1 text-[10px] ${nameLocked ? 'locked-label' : ''}">
-                            <span>Nama Artis (Ops)</span>
-                            <i class="fa-solid ${nameLocked ? 'fa-lock text-red-500' : 'fa-lock-open'} cursor-pointer hover:text-white" onclick="toggleLock('adv_name_${i}', this)"></i>
-                        </label>
-                        <input type="text" id="adv_name_${i}" data-locked="${nameLocked}" value="${nameVal}" oninput="handleAdvancedNameInput(${i})" placeholder="Nama Artis..." class="w-full bg-slate-800 text-green-300 border ${nameLocked ? 'border-red-500' : 'border-green-700'} rounded p-1.5 text-xs outline-none focus:border-green-500 placeholder-slate-500 transition-colors">
+                    <div class="flex gap-2 items-center">
+                        <input type="text" id="adv_name_${i}" data-locked="${nameLocked}" value="${nameVal}" oninput="handleAdvancedNameInput(${i})" placeholder="Nama Artis (Opsional)" class="flex-1 min-w-0 bg-slate-800 text-green-300 border ${nameLocked ? 'border-red-500' : 'border-green-700'} rounded p-1.5 text-xs outline-none focus:border-green-500 placeholder-slate-500 transition-colors">
+                        <i class="fa-solid ${nameLocked ? 'fa-lock text-red-500' : 'fa-lock-open text-slate-500'} cursor-pointer hover:text-white" onclick="toggleLock('adv_name_${i}', this)"></i>
                     </div>
 
-                    <div class="grid grid-cols-1 gap-2">
-                        <div>
-                            <label class="flex justify-between items-center text-slate-400 mb-1 text-[10px] ${genLocked ? 'locked-label' : ''}">
-                                <span>Gender</span>
-                                <i class="fa-solid ${genLocked ? 'fa-lock text-red-500' : 'fa-lock-open'} cursor-pointer hover:text-white" onclick="toggleLock('adv_gender_${i}', this)"></i>
-                            </label>
-                            <select id="adv_gender_${i}" data-locked="${genLocked}" class="w-full bg-slate-800 text-slate-200 border ${genLocked ? 'border-red-500' : 'border-slate-600'} rounded p-1.5 text-xs outline-none transition-colors">
-                                <option value="RANDOM" ${genVal==="RANDOM"?"selected":""}>🎲 Acak</option>
-                                <option value="MALE" ${genVal==="MALE"?"selected":""}>Pria</option>
-                                <option value="FEMALE" ${genVal==="FEMALE"?"selected":""}>Wanita</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="flex justify-between items-center text-slate-400 mb-1 text-[10px] ${ageLocked ? 'locked-label' : ''}">
-                                <span>Usia</span>
-                                <i class="fa-solid ${ageLocked ? 'fa-lock text-red-500' : 'fa-lock-open'} cursor-pointer hover:text-white" onclick="toggleLock('adv_age_${i}', this)"></i>
-                            </label>
-                            <select id="adv_age_${i}" data-locked="${ageLocked}" class="w-full bg-slate-800 text-slate-200 border ${ageLocked ? 'border-red-500' : 'border-slate-600'} rounded p-1.5 text-xs outline-none transition-colors">
-                                <option value="RANDOM" ${ageVal==="RANDOM"?"selected":""}>🎲 Acak</option>
-                                <option value="TEENAGER" ${ageVal==="TEENAGER"?"selected":""}>Remaja</option>
-                                <option value="YOUNG_ADULT" ${ageVal==="YOUNG_ADULT"?"selected":""}>Dewasa Muda</option>
-                                <option value="ADULT" ${ageVal==="ADULT"?"selected":""}>Dewasa</option>
-                                <option value="MATURE" ${ageVal==="MATURE"?"selected":""}>Paruh Baya</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="flex justify-between items-center text-slate-400 mb-1 text-[10px] ${demoLocked ? 'locked-label' : ''}">
-                                <span>Ras</span>
-                                <i class="fa-solid ${demoLocked ? 'fa-lock text-red-500' : 'fa-lock-open'} cursor-pointer hover:text-white" onclick="toggleLock('adv_demo_${i}', this)"></i>
-                            </label>
-                            <select id="adv_demo_${i}" data-locked="${demoLocked}" class="w-full bg-slate-800 text-slate-200 border ${demoLocked ? 'border-red-500' : 'border-slate-600'} rounded p-1.5 text-xs outline-none transition-colors">
-                                <option value="RANDOM" ${demoVal==="RANDOM"?"selected":""}>🎲 Acak</option>
-                                ${getDemoOptions(demoVal)}
-                            </select>
-                        </div>
+                    <div class="flex gap-2 items-center">
+                        <select id="adv_gender_${i}" data-locked="${genLocked}" class="flex-1 min-w-0 bg-slate-800 text-slate-200 border ${genLocked ? 'border-red-500' : 'border-slate-600'} rounded p-1.5 text-xs outline-none transition-colors">
+                            <option value="RANDOM" ${genVal==="RANDOM"?"selected":""}>🎲 Acak</option>
+                            <option value="MALE" ${genVal==="MALE"?"selected":""}>Pria</option>
+                            <option value="FEMALE" ${genVal==="FEMALE"?"selected":""}>Wanita</option>
+                        </select>
+                        <i class="fa-solid ${genLocked ? 'fa-lock text-red-500' : 'fa-lock-open text-slate-500'} cursor-pointer hover:text-white" onclick="toggleLock('adv_gender_${i}', this)"></i>
+                    </div>
+                    
+                    <div class="flex gap-2 items-center">
+                        <select id="adv_age_${i}" data-locked="${ageLocked}" class="flex-1 min-w-0 bg-slate-800 text-slate-200 border ${ageLocked ? 'border-red-500' : 'border-slate-600'} rounded p-1.5 text-xs outline-none transition-colors">
+                            <option value="RANDOM" ${ageVal==="RANDOM"?"selected":""}>🎲 Acak</option>
+                            <option value="TEENAGER" ${ageVal==="TEENAGER"?"selected":""}>Remaja</option>
+                            <option value="YOUNG_ADULT" ${ageVal==="YOUNG_ADULT"?"selected":""}>Dewasa Muda</option>
+                            <option value="ADULT" ${ageVal==="ADULT"?"selected":""}>Dewasa (30-40)</option>
+                            <option value="MATURE" ${ageVal==="MATURE"?"selected":""}>Paruh Baya</option>
+                        </select>
+                        <i class="fa-solid ${ageLocked ? 'fa-lock text-red-500' : 'fa-lock-open text-slate-500'} cursor-pointer hover:text-white" onclick="toggleLock('adv_age_${i}', this)"></i>
+                    </div>
+                    
+                    <div class="flex gap-2 items-center">
+                        <select id="adv_demo_${i}" data-locked="${demoLocked}" class="flex-1 min-w-0 bg-slate-800 text-slate-200 border ${demoLocked ? 'border-red-500' : 'border-slate-600'} rounded p-1.5 text-xs outline-none transition-colors">
+                            <option value="RANDOM" ${demoVal==="RANDOM"?"selected":""}>🎲 Acak</option>
+                            ${getDemoOptions(demoVal)}
+                        </select>
+                        <i class="fa-solid ${demoLocked ? 'fa-lock text-red-500' : 'fa-lock-open text-slate-500'} cursor-pointer hover:text-white" onclick="toggleLock('adv_demo_${i}', this)"></i>
                     </div>
                 </div>
                 `;
                 container.innerHTML += row;
             }
             
-            // Setel state disable jika nama terisi
+            // Setel state disable jika nama artis terisi
             for(let i=0; i<num; i++) {
                 handleAdvancedNameInput(i);
             }
@@ -1138,13 +1126,11 @@
                     }
                 }
 
-                // SMART BODY TYPE
                 let pGender = getGenderAndSubject(currentGenderVal, currentAgeVal, bodyTypeVal);
                 let pDemo = currentDemoVal !== "RANDOM" ? currentDemoVal : getRandom(demographics);
                 let pWardrobe = {};
                 let pAppearance = "CASUAL EVERYDAY WEAR, SLIGHTLY LIVED-IN";
 
-                // SMART WARDROBE FILTERING
                 let tPool = []; let bPool = []; let sPool = []; let aPool = []; let hPool = [];
                 
                 if (activeHoliday) {
@@ -1156,7 +1142,6 @@
                     tPool = eraData[pGender.genderId].tops; bPool = eraData[pGender.genderId].bottoms; sPool = eraData[pGender.genderId].shoes; aPool = eraData[pGender.genderId].acc; hPool = eraData[pGender.genderId].hair;
                 }
 
-                // LOGIKA LOKASI MASUK AKAL (MENCEGAH PIYAMA DI BEACH CLUB / CLUB)
                 if (setting && setting.env) {
                     const isHome = setting.env.includes("BEDROOM") || setting.env.includes("KOS") || setting.env.includes("ROOM") || setting.env.includes("COMPOUND");
                     if (!isHome) {
@@ -1177,18 +1162,15 @@
                     acc: getRandom(aPool)
                 };
 
-                // RESTRICTED HAIR & ACCESSORIES LOGIC (MATCH REFERENCE)
                 if (hairAccVal === "MATCH_STRICT") {
                     pWardrobe.hair = "EXACTLY MATCHING REFERENCE IMAGE HAIR";
                     pWardrobe.acc = "EXACTLY MATCHING REFERENCE IMAGE ACCESSORIES";
                 } else {
-                    // --- MENCEGAH ARTIS TERKENA RANDOM HIJAB JIKA TIDAK STRICT ---
                     if (customName && (pWardrobe.hair.includes("HIJAB") || pWardrobe.hair.includes("PASHMINA"))) {
                         let nonHijabHair = hPool.filter(h => !h.includes("HIJAB") && !h.includes("PASHMINA"));
                         pWardrobe.hair = nonHijabHair.length > 0 ? getRandom(nonHijabHair) : "NATURAL HAIR";
                     }
 
-                    // --- MENCEGAH PARADOKS AKSESORIS HP ---
                     const restrictPhones = (shotData.type === "FRONT_CAMERA_SELFIE" || shotData.type === "CLOSE_UP_SELFIE" || shotData.type === "CANDID_INTENTIONAL" || shotData.type === "POSED_SCENARIO");
                     if (restrictPhones && pWardrobe.acc && pWardrobe.acc.includes("PHONE")) {
                         let safeAccs = aPool.filter(a => !a.includes("PHONE"));
@@ -1196,7 +1178,6 @@
                     }
                 }
 
-                // Hijab Modesty Logic
                 if (pWardrobe.hair.includes("HIJAB") || pWardrobe.hair.includes("PASHMINA")) {
                     if (!activeHoliday) {
                         const modestTops = ["OVERSIZED LONG SLEEVE SHIRT", "KNIT CARDIGAN OVER T-SHIRT", "LONG TUNIC", "LONG FLANNEL SHIRT BUTTONED UP", "BAGGY LONG SLEEVE T-SHIRT"];
@@ -1207,7 +1188,6 @@
                     pAppearance = activeHoliday ? `MODEST FESTIVE ${activeHoliday.replace(/_/g, ' ')} HOLIDAY OUTFIT, COVERED UP` : "MODEST CASUAL EVERYDAY WEAR, COVERED UP";
                 }
 
-                // EKSPRESI WANITA SPESIFIK
                 let finalExpression = getRandom(beautyTypes);
                 if (pGender.genderId === "FEMALE" && !customScenario && (shotData.type === "FRONT_CAMERA_SELFIE" || shotData.type === "CLOSE_UP_SELFIE" || shotData.type === "MIRROR_SELFIE" || shotData.type === "CANDID_INTENTIONAL")) {
                     if (Math.random() < 0.4) {
@@ -1233,7 +1213,6 @@
             const groupAppearance = appearanceDescriptions.some(a => a.includes("MODEST")) ? "MIXED STYLES, FEATURING MODEST WEAR" : "COORDINATED STYLE";
             const finalAppearance = numSubjects === 1 ? appearanceDescriptions[0] : groupAppearance;
             
-            // --- TIME & WEATHER LOGIC ---
             let timeStr = timeVal !== "RANDOM" ? timeVal : getRandom(["MORNING", "AFTERNOON", "GOLDEN_HOUR", "NIGHT"]);
             let timeDesc = "DAYLIGHT";
             if (timeStr === "MORNING") timeDesc = "MORNING LIGHT, CRISP AND FRESH";
@@ -1246,7 +1225,6 @@
             if (weatherStr === "OVERCAST") weatherDesc = "OVERCAST AND GLOOMY, CLOUDY SKY, FLAT MOODY LIGHTING";
             if (weatherStr === "RAINING") weatherDesc = "RAINING HEAVILY, WET SURFACES REFLECTING LIGHT, VISIBLE RAINDROPS, CINEMATIC MOODY VIBE";
 
-            // --- AESTHETIC FILTER & LIGHTING LOGIC ---
             let lighting = getRandom(lightings);
             if(setting && setting.env && (setting.env.includes("RESTROOM") || setting.env.includes("BATHROOM"))) {
                 lighting = lightings.find(l => l.source.includes("VANITY")) || lightings[0];
@@ -1291,7 +1269,6 @@
             if (activeHoliday) styleName = `INDONESIAN ${activeHoliday} CELEBRATION, ${shotData.type.replace(/_/g, ' ')}`;
             if (activeAesthetic !== "DEFAULT") styleName += ` + ${activeAesthetic} AESTHETIC`;
 
-            // --- 1. PROMPT UNTUK FOTO ---
             const imagePromptData = {
                 "META": {
                     "STYLERNAME": styleName,
@@ -1344,7 +1321,6 @@
                 imagePromptData["NEGATIVE_PROMPT"] = "CGI, 3D render";
             }
 
-            // TAMBAHAN RESTRICTED NEGATIVE PROMPT JIKA MATCH HAIR/ACC
             if (hairAccVal === "MATCH_STRICT") {
                 imagePromptData["NEGATIVE_PROMPT"] += ", double glasses, extra glasses on head, changing hair style, different accessories, adding hats";
             }
@@ -1363,9 +1339,7 @@
                 };
             }
 
-            // --- 2. PROMPT UNTUK VIDEO ---
             let videoSceneDynamics = [];
-            
             if (shotData.type === "POSED_SCENARIO" && customScenario) {
                 videoSceneDynamics = [customScenario.toUpperCase()];
             } else if (numSubjects === 1) {
@@ -1377,7 +1351,6 @@
             }
                 
             const videoCameraMotions = ["SHAKY HANDHELD RECORDING", "QUICK SNAPCHAT ZOOM IN/OUT", "CASUAL PAN AROUND THE SCENE TO SHOW THE ENVIRONMENT", "STATIC BUT HAND SHAKING SLIGHTLY"];
-            
             const sceneDynamic = getRandom(videoSceneDynamics);
             const cameraMotion = getRandom(videoCameraMotions);
             
@@ -1440,7 +1413,6 @@
         function resetAndGenerate() {
             const dropdownIds = ['numSelect', 'ageSelect', 'holidaySelect', 'eraSelect', 'genderSelect', 'demoSelect', 'shotSelect', 'locSelect', 'timeSelect', 'weatherSelect', 'aestheticSelect', 'strictSelect', 'bodyTypeSelect', 'hairAccSelect'];
             
-            // 1. Reset Global Fields
             dropdownIds.forEach(id => {
                 const el = document.getElementById(id);
                 if (el && el.dataset.locked !== "true") {
@@ -1469,7 +1441,6 @@
                 eraSelect.classList.remove('opacity-50', 'cursor-not-allowed');
             }
 
-            // 2. Reset Advanced Panel Fields
             const advToggle = document.getElementById('advancedToggle');
             if(advToggle && advToggle.checked) {
                 const container = document.getElementById('characterRows');
@@ -1497,57 +1468,63 @@
 
         // --- INIT DROPDOWNS ---
         function initDropdowns() {
-            const demoSelect = document.getElementById('demoSelect');
-            if (demoSelect) {
-                if (demoSelect.options.length <= 1) {
-                    demographics.forEach(demo => {
-                        const opt = document.createElement('option');
-                        opt.value = demo;
-                        opt.textContent = demo;
-                        demoSelect.appendChild(opt);
-                    });
-                }
-            }
-
-            const locSelect = document.getElementById('locSelect');
-            if (locSelect) {
-                if (locSelect.options.length <= 1) {
-                    const eras = ["MODERN_2020S", "TIMELESS_BASIC", "HIPSTER_2010S", "Y2K_2000S", "GRUNGE_1990S"];
-                    const eraNames = {"MODERN_2020S": "2020s (Modern)", "TIMELESS_BASIC": "Timeless (Bebas Era)", "HIPSTER_2010S": "2010s (Indie)", "Y2K_2000S": "2000s (Y2K)", "GRUNGE_1990S": "1990s (Grunge)"};
-
-                    eras.forEach(era => {
-                        const group = document.createElement('optgroup');
-                        group.label = `--- Era ${eraNames[era]} ---`;
-                        
-                        settings.forEach((s, index) => {
-                            if (s.era_id === era) {
-                                const opt = document.createElement('option');
-                                opt.value = index;
-                                let labelName = s.env;
-                                if(labelName.length > 30) labelName = labelName.substring(0, 27) + '...';
-                                opt.textContent = labelName;
-                                group.appendChild(opt);
-                            }
+            try {
+                const demoSelect = document.getElementById('demoSelect');
+                if (demoSelect && demoSelect.appendChild) {
+                    if (!demoSelect.options || demoSelect.options.length <= 1) {
+                        demoSelect.innerHTML = '<option value="RANDOM">🎲 Acak / Campur</option>';
+                        demographics.forEach(demo => {
+                            const opt = document.createElement('option');
+                            opt.value = demo;
+                            opt.textContent = demo;
+                            demoSelect.appendChild(opt);
                         });
-                        locSelect.appendChild(group);
+                    }
+                }
+
+                const locSelect = document.getElementById('locSelect');
+                if (locSelect && locSelect.appendChild) {
+                    if (!locSelect.options || locSelect.options.length <= 1) {
+                        locSelect.innerHTML = '<option value="RANDOM">🎲 Acak Sesuai Era</option>';
+                        const eras = ["MODERN_2020S", "TIMELESS_BASIC", "HIPSTER_2010S", "Y2K_2000S", "GRUNGE_1990S"];
+                        const eraNames = {"MODERN_2020S": "2020s (Modern)", "TIMELESS_BASIC": "Timeless (Bebas Era)", "HIPSTER_2010S": "2010s (Indie)", "Y2K_2000S": "2000s (Y2K)", "GRUNGE_1990S": "1990s (Grunge)"};
+
+                        eras.forEach(era => {
+                            const group = document.createElement('optgroup');
+                            group.label = `--- Era ${eraNames[era]} ---`;
+                            
+                            settings.forEach((s, index) => {
+                                if (s.era_id === era) {
+                                    const opt = document.createElement('option');
+                                    opt.value = index;
+                                    let labelName = s.env;
+                                    if(labelName.length > 30) labelName = labelName.substring(0, 27) + '...';
+                                    opt.textContent = labelName;
+                                    group.appendChild(opt);
+                                }
+                            });
+                            locSelect.appendChild(group);
+                        });
+                    }
+                    
+                    locSelect.addEventListener('change', (e) => {
+                        const eraSelect = document.getElementById('eraSelect');
+                        if (!eraSelect) return;
+                        if(e.target.value !== "RANDOM") {
+                            const selectedSetting = settings[parseInt(e.target.value)];
+                            if (selectedSetting) {
+                                eraSelect.value = selectedSetting.era_id;
+                                eraSelect.disabled = true;
+                                eraSelect.classList.add('opacity-50', 'cursor-not-allowed');
+                            }
+                        } else if (eraSelect.dataset.locked !== "true") {
+                            eraSelect.disabled = false;
+                            eraSelect.classList.remove('opacity-50', 'cursor-not-allowed');
+                        }
                     });
                 }
-                
-                locSelect.addEventListener('change', (e) => {
-                    const eraSelect = document.getElementById('eraSelect');
-                    if (!eraSelect) return;
-                    if(e.target.value !== "RANDOM") {
-                        const selectedSetting = settings[parseInt(e.target.value)];
-                        if (selectedSetting) {
-                            eraSelect.value = selectedSetting.era_id;
-                            eraSelect.disabled = true;
-                            eraSelect.classList.add('opacity-50', 'cursor-not-allowed');
-                        }
-                    } else if (eraSelect.dataset.locked !== "true") {
-                        eraSelect.disabled = false;
-                        eraSelect.classList.remove('opacity-50', 'cursor-not-allowed');
-                    }
-                });
+            } catch(e) {
+                console.error("Initialization warning: ", e);
             }
 
             const numSelect = document.getElementById('numSelect');
