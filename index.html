@@ -37,6 +37,14 @@
         .locked-label i {
             color: #ef4444; /* red-500 */
         }
+        optgroup {
+            font-weight: bold;
+            color: #fbbf24;
+            background-color: #0f172a;
+        }
+        option {
+            color: #e2e8f0;
+        }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-8 flex flex-col items-center">
@@ -58,12 +66,12 @@
         <!-- Header -->
         <div class="text-center mb-8">
             <h1 class="text-3xl md:text-4xl font-bold text-white mb-2"><i class="fa-solid fa-user-group text-red-500 mr-2"></i> Indonesian Amateur Shot Generator</h1>
-            <p class="text-slate-400">Vibe Lokal + Skenario Cerdas + Smart Lock + Kustom Artis.</p>
-            <p class="text-xs text-yellow-500 mt-2"><i class="fa-solid fa-lightbulb"></i> Tips: Klik ikon gembok (<i class="fa-solid fa-lock-open"></i>) untuk mengunci parameter agar tidak ikut teracak.</p>
+            <p class="text-slate-400">Vibe Lokal + Skenario Cerdas + Director Mode (Angle) + Smart Lock.</p>
+            <p class="text-xs text-yellow-500 mt-2"><i class="fa-solid fa-lightbulb"></i> Tips: Pilih "Era/Zaman" terlebih dahulu untuk melihat daftar Lokasi Spesifik yang rapi.</p>
         </div>
 
         <!-- Parameters / Filters -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-7 gap-4 mb-8 w-full bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg text-sm items-end">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-4 mb-8 w-full bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg text-sm items-end">
             <div>
                 <label class="flex justify-between items-center text-slate-400 mb-1 font-semibold text-xs transition-colors">
                     <span>Jumlah Orang</span>
@@ -118,33 +126,64 @@
                     <option value="COUPLE">Couple (Pria & Wanita)</option>
                 </select>
             </div>
+            <!-- BROWSE ERA (TRIGGER LOKASI) -->
             <div>
-                <label class="flex justify-between items-center text-slate-400 mb-1 font-semibold text-xs transition-colors">
-                    <span>Era / Zaman</span>
+                <label class="flex justify-between items-center text-blue-400 mb-1 font-semibold text-xs transition-colors">
+                    <span><i class="fa-solid fa-clock-rotate-left"></i> Era / Zaman</span>
                     <i class="fa-solid fa-lock-open cursor-pointer hover:text-white" onclick="toggleLock('eraSelect', this)"></i>
                 </label>
-                <select id="eraSelect" class="w-full bg-slate-900 text-slate-200 border border-slate-600 rounded p-2 outline-none focus:border-red-500 transition-colors cursor-pointer">
-                    <option value="RANDOM">🎲 Acak (Probabilitas)</option>
-                    <option value="MODERN_2020S">2020s (Modern)</option>
+                <select id="eraSelect" onchange="updateLocationDropdown()" class="w-full bg-slate-900 text-blue-200 border border-blue-600 rounded p-2 outline-none focus:border-blue-400 transition-colors cursor-pointer font-bold">
+                    <option value="RANDOM">🎲 Acak Era Otomatis</option>
+                    <option value="MODERN_2020S">2020s (Modern / Gen-Z)</option>
                     <option value="TIMELESS_BASIC">Timeless / Basic Kasual</option>
                     <option value="HIPSTER_2010S">2010s (Hipster/Indie)</option>
                     <option value="Y2K_2000S">2000s (Y2K/Warnet)</option>
-                    <option value="GRUNGE_1990S">1990s (Grunge)</option>
+                    <option value="GRUNGE_1990S">1990s (Grunge/Retro)</option>
                 </select>
             </div>
-            <div>
+            <!-- LOKASI CASCADING -->
+            <div class="col-span-1 sm:col-span-2 xl:col-span-3">
                 <label class="flex justify-between items-center text-slate-400 mb-1 font-semibold text-xs transition-colors">
-                    <span>Lokasi Spesifik</span>
+                    <span>Lokasi Spesifik (Berdasarkan Era)</span>
                     <i class="fa-solid fa-lock-open cursor-pointer hover:text-white" onclick="toggleLock('locSelect', this)"></i>
                 </label>
                 <select id="locSelect" class="w-full bg-slate-900 text-slate-200 border border-slate-600 rounded p-2 outline-none focus:border-red-500 cursor-pointer">
-                    <option value="RANDOM">🎲 Acak Sesuai Era</option>
-                    <!-- Populated via JS -->
+                    <option value="RANDOM">Pilih Era Dulu / 🎲 Acak Lokasi</option>
+                    <!-- Populated via JS based on Era -->
+                </select>
+            </div>
+            <!-- ANGLE & SHOT CONTROL BARU -->
+            <div class="col-span-1 sm:col-span-2 xl:col-span-2">
+                <label class="flex justify-between items-center text-orange-400 mb-1 font-semibold text-xs transition-colors">
+                    <span><i class="fa-solid fa-video"></i> Angle & Shot Size (Director Mode)</span>
+                    <i class="fa-solid fa-lock-open cursor-pointer hover:text-white" onclick="toggleLock('angleSelect', this)"></i>
+                </label>
+                <select id="angleSelect" class="w-full bg-slate-900 text-orange-200 border border-orange-600 rounded p-2 outline-none focus:border-orange-400 cursor-pointer">
+                    <option value="RANDOM">🎲 Acak Otomatis Ikuti Skenario</option>
+                    <optgroup label="Sudut Pengambilan Kamera (Angle)">
+                        <option value="EYE_LEVEL">Sejajar Mata (Eye Level)</option>
+                        <option value="HIGH_ANGLE">Dari Atas (High Angle POV)</option>
+                        <option value="LOW_ANGLE">Dari Bawah (Low Angle POV)</option>
+                        <option value="BIRD_EYE">Dari Atas Udara (Bird's Eye View)</option>
+                        <option value="WORM_EYE">Dari Tanah Menengadah (Frog/Worm's Eye)</option>
+                        <option value="DUTCH_ANGLE">Miring Estetik (Dutch/Canted Angle)</option>
+                        <option value="OTS">Dari Belakang Bahu (Over the Shoulder / OTS)</option>
+                        <option value="POV">Sudut Pandang Orang Pertama (POV)</option>
+                    </optgroup>
+                    <optgroup label="Jarak Pengambilan (Shot Size)">
+                        <option value="ELS">Sangat Jauh Sekali (Extreme Long Shot)</option>
+                        <option value="LS">Seluruh Badan (Long Shot)</option>
+                        <option value="MLS">Lutut ke Atas (Medium Long Shot)</option>
+                        <option value="MS">Pinggang ke Atas (Medium Shot)</option>
+                        <option value="MCU">Dada ke Atas (Medium Close-Up)</option>
+                        <option value="CU">Fokus Wajah & Bahu (Close-Up)</option>
+                        <option value="ECU">Sangat Dekat / Detail (Extreme Close-Up)</option>
+                    </optgroup>
                 </select>
             </div>
             <div>
                 <label class="flex justify-between items-center text-slate-400 mb-1 font-semibold text-xs transition-colors">
-                    <span>Tipe Shot</span>
+                    <span>Tipe Shot (Gaya)</span>
                     <i class="fa-solid fa-lock-open cursor-pointer hover:text-white" onclick="toggleLock('shotSelect', this)"></i>
                 </label>
                 <select id="shotSelect" onchange="toggleScenarioInput()" class="w-full bg-slate-900 text-slate-200 border border-slate-600 rounded p-2 outline-none focus:border-red-500 cursor-pointer">
@@ -252,7 +291,7 @@
             </div>
             
             <!-- Skenario Spesifik Container -->
-            <div id="scenarioContainer" class="hidden col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-5 xl:col-span-7 mt-2">
+            <div id="scenarioContainer" class="hidden col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-5 xl:col-span-8 mt-2">
                 <label class="flex justify-between items-center text-green-400 mb-1 font-semibold text-xs transition-colors">
                     <span><i class="fa-solid fa-clapperboard"></i> Skenario / Pose Spesifik (Opsional)</span>
                     <i class="fa-solid fa-lock-open cursor-pointer hover:text-white" onclick="toggleLock('customScenarioInput', this)"></i>
@@ -373,7 +412,6 @@
             "ACEHNESE INDONESIAN WITH ARABIC FEATURES"
         ];
         
-        // Diperluas dengan Beauty Types / Ekspresi Natural
         const beautyTypes = ["NATURAL NO-MAKEUP LOOK", "MESSY EVERYDAY LOOK", "SLIGHTLY SWEATY FROM TROPICAL HEAT", "CASUAL AND RELAXED", "GLOWING SUN-KISSED SKIN", "MESSY HAIR JUST WOKE UP", "VISIBLE DARK CIRCLES, SLEEP-DEPRIVED VIBE"];
         
         const eraWeights = [
@@ -515,8 +553,9 @@
             { env: "URBAN ALLEYWAY WITH YELLOW WALLS", arch: "NARROW STREET WITH VIBRANT YELLOW STUCCO WALLS", props: "STREET SIGNS, PAVED SIDEWALK", era_id: "MODERN_2020S" },
             { env: "CONCRETE CITY STAIRS", arch: "MODERN CONCRETE ARCHITECTURE, METAL RAILINGS", props: "URBAN METROPOLIS BUILDINGS IN BACKGROUND", era_id: "MODERN_2020S" },
             { env: "PEDESTRIAN CROSSWALK (ZEBRA CROSS)", arch: "ASPHALT ROAD WITH THICK WHITE STRIPES", props: "CITY STREET VIBE", era_id: "MODERN_2020S" },
-            
-            // NEW SCENARIOS (From latest images)
+            { env: "SITTING ON A RED PLASTIC CHAIR AT NIGHT", arch: "INDONESIAN STREET SIDEWALK AT NIGHT", props: "RED PLASTIC CHAIR, STREET FOOD TENT IN BACKGROUND", era_id: "MODERN_2020S" },
+            { env: "INSIDE A COMMUTER TRAIN HOLDING HANDRAIL", arch: "PUBLIC TRANSPORT TRAIN INTERIOR", props: "OVERHEAD HANDRAILS, BLURRED PASSENGERS", era_id: "MODERN_2020S" },
+            { env: "ELEVATOR COUPLE MIRROR", arch: "STAINLESS STEEL ELEVATOR CABIN WITH LARGE MIRROR", props: "ELEVATOR BUTTONS", era_id: "MODERN_2020S" },
             { env: "DARK ROOM LIT ONLY BY PHONE SCREEN", arch: "PITCH BLACK ROOM", props: "GLOWING SMARTPHONE SCREEN REFLECTING ON FACE", era_id: "MODERN_2020S" },
             { env: "LATE NIGHT CONVENIENCE STORE AISLE (LORONG MINIMARKET)", arch: "FLUORESCENT LIT AISLES", props: "COLORFUL SNACK SHELVES, REFRIGERATORS", era_id: "MODERN_2020S" },
 
@@ -608,23 +647,23 @@
                     tops: ["PLAIN BLACK T-SHIRT", "SIMPLE WHITE TANK TOP", "BASIC CREWNECK TEE", "FITTED CASUAL TOP", "OVERSIZED WHITE BUTTON-UP SHIRT", "RIBBED KNIT SWEATER", "STRIPED LONG SLEEVE TEE", "CASUAL SLEEVELESS BLOUSE", "PLAIN PASTEL T-SHIRT", "RIBBED CROP TOP", "SPAGHETTI STRAP TANK TOP", "BASIC CROP TOP", "KNIT CARDIGAN", "TURTLENECK SWEATER", "LINEN SHIRT BUTTONED DOWN", "SLEEVELESS CAMISOLE", "FITTED GRAPHIC T-SHIRT", "BROWN BARISTA APRON OVER WHITE TEE", "KEBAYA MODERN HIJAB", "GAMIS/ABAYA ELEGAN", "WHITE TANK TOP WITH LACE TRIM", "COZY OVERSIZED HOODIE", "CASUAL RIBBED TANK TOP", "CHIC LINEN BLOUSE", "OFF-SHOULDER BLOUSE", "WHITE T-SHIRT WITH A RED SWEATER DRAPED AND TIED OVER SHOULDERS", "TIGHT GRAPHIC RINGER BABY TEE", "NAVY POLO SHIRT", "POLKA DOT CAMISOLE", "GREEN TIE-DYE SHIRT", "STRIPED GREY AND BLACK LONG SLEEVE SWEATER", "PASTEL GREEN CARDIGAN", "BEIGE CRINKLE BLOUSE", "OVERSIZED GRAPHIC TEE WITH CUTE PRINTS", "DARK GREY T-SHIRT", "BLACK HOODIE WORN OVER HEAD", "WHITE SLEEVELESS KNIT TOP", "OVERSIZED DARK GREY GRAPHIC TEE", "WHITE KNIT SWEATER", "BLACK LEATHER JACKET OVER GREY HOODIE", "FLORAL SUMMER DRESS", "RED SWEATER", "HEAVY FAUX FUR COAT OVER A TUBE TOP", "TIGHT GRAPHIC TANK TOP", "WHITE LONG-SLEEVE CROP TOP", "BLACK LEATHER JACKET OVER A WHITE SHIRT AND DARK TIE", "WHITE SHORT-SLEEVE BUTTON-UP SHIRT WITH A DARK TIE"], 
                     bottoms: ["BLUE MOM JEANS", "PLAIN BLACK PANTS", "SIMPLE SKIRT", "WIDE-LEG TROUSERS", "CASUAL SHORTS", "BEIGE CULLOTES", "DENIM OVERALLS", "LINEN PANTS", "MIDI SLIP SKIRT", "BERMUDA SHORTS", "CUTBRAY (FLARE) JEANS", "CELANA PENSIL (SKINNY TIGHT PANTS)", "KAIN BATIK LILIT", "PLEATED TENNIS SKIRT", "WHITE LONG TIERED SKIRT", "PLEATED MINI SKIRT", "DENIM MINI SKIRT", "BLACK ATHLETIC SHORTS", "BAGGY FADED JEANS", "BLACK PLEATED SKIRT", "PATTERNED MINI SKIRT"], 
                     shoes: ["CASUAL SNEAKERS", "FLATS", "SANDALS", "WHITE CHUNKY SNEAKERS", "FLUFFY INDOOR SLIPPERS", "BAREFOOT", "HIGH HEELS", "KNEE-HIGH SOCKS WITH LOAFERS", "POLKA-DOT SLIP-ONS", "RED AND WHITE CHUNKY SNEAKERS", "RED NIKE DUNKS", "RED ADIDAS SAMBA", "YELLOW SNEAKERS"], 
-                    acc: ["SIMPLE BEADED NECKLACE", "MINIMALIST EARRINGS", "NONE", "DELICATE PENDANT NECKLACE", "SCRUNCHIE ON WRIST", "TOTE BAG", "NOSE PIERCING (NOSE RING)", "DELICATE LIP PIERCING", "WEARING A LUXURY ROLEX WATCH", "WEARING A RICHARD MILLE WATCH", "WEARING AN AUDEMARS PIGUET (AP) WATCH", "WEARING A CLASSIC CARTIER TANK WATCH", "WEARING A PATEK PHILIPPE WATCH", "BLUE BASEBALL CAP", "CUTE PHONE CASE WITH STICKERS", "TAS TANGAN MEWAH", "GLASSES RESTING ON TOP OF HEAD", "WOVEN STRAW BAG", "SILVER VINTAGE DIGITAL COMPACT CAMERA", "OVER-EAR HEADPHONES", "BAG WITH CUTE PLUSH CHARM", "RED BANDANA", "CLEAR SQUARE GLASSES", "WHITE SLING BAG", "WHITE OVAL SUNGLASSES", "TINY BLACK SUNGLASSES", "STRAW HAT", "COMPACT CUSHION MIRROR", "FISHNET TIGHTS"] 
+                    acc: ["SIMPLE BEADED NECKLACE", "MINIMALIST EARRINGS", "NONE", "DELICATE PENDANT NECKLACE", "SCRUNCHIE ON WRIST", "TOTE BAG", "NOSE PIERCING (NOSE RING)", "DELICATE LIP PIERCING", "WEARING A LUXURY ROLEX WATCH", "WEARING A RICHARD MILLE WATCH", "WEARING AN AUDEMARS PIGUET (AP) WATCH", "WEARING A CLASSIC CARTIER TANK WATCH", "WEARING A PATEK PHILIPPE WATCH", "BLUE BASEBALL CAP", "TAS TANGAN MEWAH", "GLASSES RESTING ON TOP OF HEAD", "WOVEN STRAW BAG", "SILVER VINTAGE DIGITAL COMPACT CAMERA", "OVER-EAR HEADPHONES", "BAG WITH CUTE PLUSH CHARM", "RED BANDANA", "CLEAR SQUARE GLASSES", "WHITE SLING BAG", "WHITE OVAL SUNGLASSES", "TINY BLACK SUNGLASSES", "STRAW HAT", "COMPACT CUSHION MIRROR", "FISHNET TIGHTS", "CUTE PLUSH TOY CHARM ON PHONE"] 
                 }
             },
             "MODERN_2020S": {
                 "MALE": { 
                     hair: ["FLUFFY TEXTURED FRINGE", "SHORT COMMA HAIR", "MESSY MULLET FADE", "TWO-BLOCK HAIRCUT", "BUZZ CUT FADE", "ASH GREY DYED COMMA HAIR", "SHORT DREADLOCKS", "FADE HAIRCUT WITH CORNROWS", "GREEN DYED EDGY HAIR"], 
-                    tops: ["OVERSIZED GRAPHIC TEE", "PLAIN BLACK OVERSIZED T-SHIRT", "SLEEVELESS TANK TOP", "LIGHTWEIGHT CASUAL BUTTON-UP", "ESSENTIALS BOXY HOODIE", "BASEBALL JACKET OVER TEE", "FLANNEL SHIRT", "KNIT POLO SHIRT", "ATHLEISURE ZIP-UP", "CROCHET SHIRT", "BOXY FIT SHORT SLEEVE BUTTON-UP", "OVERSIZED KNIT CARDIGAN", "SLEEVELESS GRAPHIC TANK", "VARSITY JACKET", "BLACK POLO SHIRT WITH SUBTLE RED AND WHITE STRIPE DETAIL", "GREEN HOODIE", "FULL BLACK SUIT AND TIE", "GREEN FLANNEL OVER GRAPHIC TEE", "RED FOOTBALL CLUB JERSEY", "HEAVY METAL BAND T-SHIRT", "LIGHT BLUE LINEN SHIRT UNBUTTONED", "HEAVY FUR COAT OVER HOODIE", "DARK GREY TURTLENECK SWEATER", "DARK GREY T-SHIRT", "BLACK HOODIE WORN OVER HEAD", "BLACK LEATHER JACKET OVER GREY HOODIE", "RED SWEATER", "PEACH KNIT SWEATER", "TIGHT WHITE BABY TEE WITH A RED STAR", "TIGHT BLACK T-SHIRT"], 
+                    tops: ["OVERSIZED GRAPHIC TEE", "PLAIN BLACK OVERSIZED T-SHIRT", "SLEEVELESS TANK TOP", "LIGHTWEIGHT CASUAL BUTTON-UP", "ESSENTIALS BOXY HOODIE", "BASEBALL JACKET OVER TEE", "FLANNEL SHIRT", "KNIT POLO SHIRT", "ATHLEISURE ZIP-UP", "CROCHET SHIRT", "BOXY FIT SHORT SLEEVE BUTTON-UP", "OVERSIZED KNIT CARDIGAN", "SLEEVELESS GRAPHIC TANK", "VARSITY JACKET", "BLACK POLO SHIRT WITH SUBTLE RED AND WHITE STRIPE DETAIL", "GREEN HOODIE", "FULL BLACK SUIT AND TIE", "GREEN FLANNEL OVER GRAPHIC TEE", "RED FOOTBALL CLUB JERSEY", "HEAVY METAL BAND T-SHIRT", "LIGHT BLUE LINEN SHIRT UNBUTTONED", "HEAVY FUR COAT OVER HOODIE", "DARK GREY TURTLENECK SWEATER", "DARK GREY T-SHIRT", "BLACK HOODIE WORN OVER HEAD", "BLACK LEATHER JACKET OVER GREY HOODIE", "RED SWEATER", "PEACH KNIT SWEATER", "TIGHT WHITE BABY TEE WITH A RED STAR", "TIGHT BLACK T-SHIRT", "PUFFER JACKET"], 
                     bottoms: ["BAGGY CARGO PANTS", "LOOSE SHORTS", "WIDE-LEG PANTS", "RELAXED FIT JEANS", "SWEATSHORTS", "JORTS (LONG JEAN SHORTS)", "NYLON CARGO PANTS", "PARACHUTE PANTS", "RAW DENIM WIDE LEG PANTS", "RELAXED CARPENTER PANTS", "WHITE TAILORED TROUSERS", "NAVY ATHLETIC SHORTS"], 
                     shoes: ["CHUNKY DAD SNEAKERS", "NIKE DUNKS", "SLIP-ON SANDALS", "CROCS WITH CHARMS", "RUNNING SHOES", "BAREFOOT", "LEATHER LOAFERS", "YELLOW SNEAKERS"], 
-                    acc: ["AIRPODS MAX", "CANVAS TOTE BAG", "SILVER CHAIN", "CROSSBODY BAG", "SUNGLASSES ON HEAD", "BEADED BRACELET", "NOSE PIERCING", "SMOKING A CIGARETTE", "WEARING A LUXURY ROLEX WATCH", "WEARING A RICHARD MILLE WATCH", "WEARING AN AUDEMARS PIGUET (AP) WATCH", "WEARING A CASIO G-SHOCK WATCH", "WEARING A PATEK PHILIPPE WATCH", "WEARING AN OMEGA WATCH", "BLACK LEATHER DRIVING GLOVES", "VINTAGE RED MARLBORO CAP", "THICK BLACK SQUARE GLASSES", "WHITE OVAL SUNGLASSES", "TINY BLACK SUNGLASSES", "STUDDED BELT"] 
+                    acc: ["AIRPODS MAX", "CANVAS TOTE BAG", "SILVER CHAIN", "CROSSBODY BAG", "SUNGLASSES ON HEAD", "BEADED BRACELET", "NOSE PIERCING", "SMOKING A CIGARETTE", "WEARING A LUXURY ROLEX WATCH", "WEARING A RICHARD MILLE WATCH", "WEARING AN AUDEMARS PIGUET (AP) WATCH", "WEARING A CASIO G-SHOCK WATCH", "WEARING A PATEK PHILIPPE WATCH", "WEARING AN OMEGA WATCH", "BLACK LEATHER DRIVING GLOVES", "VINTAGE RED MARLBORO CAP", "THICK BLACK SQUARE GLASSES", "WHITE OVAL SUNGLASSES", "TINY BLACK SUNGLASSES", "STUDDED BELT", "OVER-EAR HEADPHONES"] 
                 },
                 "FEMALE": { 
                     hair: ["MESSY CLAW CLIP UPDO", "CURTAIN BANGS WITH HIGHLIGHTS", "SLEEK STRAIGHT BLACK HAIR", "HIJAB PASHMINA CASUAL", "WOLF CUT", "MESSY LOW BUN", "BURGUNDY RED DYED HAIR", "AFRICAN-AMERICAN STYLE BOX BRAIDS", "LONG KNOTLESS BRAIDS", "SPACE BUNS", "BLONDE BALAYAGE HAIR", "THICK DUTCH BRAIDS", "MESSY TOP KNOT BUN", "TWIN BRAIDS", "SIDE PONYTAIL WITH SCRUNCHIE"], 
-                    tops: ["BABY TEE CROP TOP", "OVERSIZED T-SHIRT AS DRESS", "SLEEVELESS KNIT TOP", "CROPPED CARDIGAN", "OVERSIZED GRAPHIC T-SHIRT", "ATHLEISURE ZIP-UP JACKET", "PASTEL COLOR SWEATER", "DENIM JACKET OVER TANK TOP", "RIBBED HALTER TOP", "PUFF SLEEVE BLOUSE", "CASUAL KEBAYA-INSPIRED MODERN CROP", "PLAIN BLACK T-SHIRT", "TUBE TOP", "CROP TANK TOP", "Y2K-INSPIRED BABY TEE", "CHUNKY KNIT CARDIGAN", "HALTER CROP TOP", "ASYMMETRICAL TOP", "OVERSIZED BLAZER OVER BRALETTE", "CORSET TOP", "TIGHT VINTAGE ROCK BAND TEE", "TIGHT BABY TEE WITH BAND LOGO", "STRIPED SHIRT UNBUTTONED AT CHEST", "BROWN BARISTA APRON OVER WHITE TEE", "WHITE TANK TOP WITH LACE TRIM", "COZY OVERSIZED HOODIE", "CASUAL RIBBED TANK TOP", "CHIC LINEN BLOUSE", "OFF-SHOULDER BLOUSE", "WHITE T-SHIRT WITH A RED SWEATER DRAPED AND TIED OVER SHOULDERS", "TIGHT GRAPHIC RINGER BABY TEE", "NAVY POLO SHIRT", "POLKA DOT CAMISOLE", "GREEN TIE-DYE SHIRT", "DARK GREEN FUZZY FLEECE JACKET", "BLACK TIGHT T-SHIRT", "OFF-SHOULDER LIGHT GREY TOP", "STRIPED GREY AND BLACK LONG SLEEVE SWEATER", "PASTEL GREEN CARDIGAN", "BEIGE CRINKLE BLOUSE", "OVERSIZED GRAPHIC TEE WITH CUTE PRINTS", "DARK GREY T-SHIRT", "BLACK HOODIE WORN OVER HEAD", "WHITE SLEEVELESS KNIT TOP", "OVERSIZED DARK GREY GRAPHIC TEE", "WHITE KNIT SWEATER", "BLACK LEATHER JACKET OVER GREY HOODIE", "FLORAL SUMMER DRESS", "RED SWEATER", "HEAVY FAUX FUR COAT OVER A TUBE TOP", "TIGHT GRAPHIC TANK TOP", "WHITE LONG-SLEEVE CROP TOP", "BLACK LEATHER JACKET OVER A WHITE SHIRT AND DARK TIE", "WHITE SHORT-SLEEVE BUTTON-UP SHIRT WITH A DARK TIE"], 
+                    tops: ["BABY TEE CROP TOP", "OVERSIZED T-SHIRT AS DRESS", "SLEEVELESS KNIT TOP", "CROPPED CARDIGAN", "OVERSIZED GRAPHIC T-SHIRT", "ATHLEISURE ZIP-UP JACKET", "PASTEL COLOR SWEATER", "DENIM JACKET OVER TANK TOP", "RIBBED HALTER TOP", "PUFF SLEEVE BLOUSE", "CASUAL KEBAYA-INSPIRED MODERN CROP", "PLAIN BLACK T-SHIRT", "TUBE TOP", "CROP TANK TOP", "Y2K-INSPIRED BABY TEE", "CHUNKY KNIT CARDIGAN", "HALTER CROP TOP", "ASYMMETRICAL TOP", "OVERSIZED BLAZER OVER BRALETTE", "CORSET TOP", "TIGHT VINTAGE ROCK BAND TEE", "TIGHT BABY TEE WITH BAND LOGO", "STRIPED SHIRT UNBUTTONED AT CHEST", "BROWN BARISTA APRON OVER WHITE TEE", "WHITE TANK TOP WITH LACE TRIM", "COZY OVERSIZED HOODIE", "CASUAL RIBBED TANK TOP", "CHIC LINEN BLOUSE", "OFF-SHOULDER BLOUSE", "WHITE T-SHIRT WITH A RED SWEATER DRAPED AND TIED OVER SHOULDERS", "TIGHT GRAPHIC RINGER BABY TEE", "NAVY POLO SHIRT", "POLKA DOT CAMISOLE", "GREEN TIE-DYE SHIRT", "DARK GREEN FUZZY FLEECE JACKET", "BLACK TIGHT T-SHIRT", "OFF-SHOULDER LIGHT GREY TOP", "STRIPED GREY AND BLACK LONG SLEEVE SWEATER", "PASTEL GREEN CARDIGAN", "BEIGE CRINKLE BLOUSE", "OVERSIZED GRAPHIC TEE WITH CUTE PRINTS", "DARK GREY T-SHIRT", "BLACK HOODIE WORN OVER HEAD", "WHITE SLEEVELESS KNIT TOP", "OVERSIZED DARK GREY GRAPHIC TEE", "WHITE KNIT SWEATER", "BLACK LEATHER JACKET OVER GREY HOODIE", "FLORAL SUMMER DRESS", "RED SWEATER", "HEAVY FAUX FUR COAT OVER A TUBE TOP", "TIGHT GRAPHIC TANK TOP", "WHITE LONG-SLEEVE CROP TOP", "BLACK LEATHER JACKET OVER A WHITE SHIRT AND DARK TIE", "WHITE SHORT-SLEEVE BUTTON-UP SHIRT WITH A DARK TIE", "PUFFER JACKET"], 
                     bottoms: ["PARACHUTE PANTS", "BAGGY MOM JEANS", "FLARE LEGGINGS", "DENIM CUTOFF SHORTS", "PLEATED TENNIS SKIRT", "WIDE-LEG LINEN PANTS", "WIDE-LEG CARGO PANTS", "MICRO MINI SKIRT", "PARACHUTE MAXI SKIRT", "DENIM OVERALLS", "LOW-RISE BAGGY JEANS", "CELANA CUTBRAY (FLARE JEANS)", "CELANA PENSIL (SKINNY JEANS)", "WHITE LONG TIERED SKIRT", "PLEATED MINI SKIRT", "DENIM MINI SKIRT", "BLACK ATHLETIC SHORTS", "BAGGY FADED JEANS", "BLACK PLEATED SKIRT", "PATTERNED MINI SKIRT"], 
                     shoes: ["NEW BALANCE SNEAKERS", "PLATFORM SANDALS", "DOC MARTENS", "CHUNKY LOAFERS", "UGG BOOTS", "BAREFOOT", "SLIDES", "KNEE-HIGH SOCKS WITH LOAFERS", "POLKA-DOT SLIP-ONS", "RED AND WHITE CHUNKY SNEAKERS", "RED NIKE DUNKS", "RED ADIDAS SAMBA", "YELLOW SNEAKERS"], 
-                    acc: ["BEADED PHONE CHARM", "TINY SHOULDER BAG", "SUNGLASSES ON HEAD", "CHUNKY RINGS", "STANLEY CUP TUMBLER", "COLORFUL BEADED NECKLACE", "LIP PIERCING (LIP RING)", "WEARING A LUXURY ROLEX WATCH", "WEARING A RICHARD MILLE WATCH", "WEARING AN AUDEMARS PIGUET (AP) WATCH", "WEARING A CLASSIC CARTIER TANK WATCH", "WEARING A PATEK PHILIPPE WATCH", "BLUE BASEBALL CAP", "CUTE PHONE CASE WITH STICKERS", "TAS TANGAN MEWAH", "GLASSES RESTING ON TOP OF HEAD", "WOVEN STRAW BAG", "SILVER VINTAGE DIGITAL COMPACT CAMERA", "OVER-EAR HEADPHONES", "BAG WITH CUTE PLUSH CHARM", "RED BANDANA", "CLEAR SQUARE GLASSES", "WHITE SLING BAG", "COLORFUL CROCHET BUCKET HAT", "WIRED EARPHONES", "THICK BLACK SQUARE GLASSES", "BLACK BEANIE WITH WHITE GRAPHICS", "WHITE OVAL SUNGLASSES", "TINY BLACK SUNGLASSES", "STRAW HAT", "COMPACT CUSHION MIRROR", "FISHNET TIGHTS"] 
+                    acc: ["BEADED PHONE CHARM", "TINY SHOULDER BAG", "SUNGLASSES ON HEAD", "CHUNKY RINGS", "STANLEY CUP TUMBLER", "COLORFUL BEADED NECKLACE", "LIP PIERCING (LIP RING)", "WEARING A LUXURY ROLEX WATCH", "WEARING A RICHARD MILLE WATCH", "WEARING AN AUDEMARS PIGUET (AP) WATCH", "WEARING A CLASSIC CARTIER TANK WATCH", "WEARING A PATEK PHILIPPE WATCH", "BLUE BASEBALL CAP", "TAS TANGAN MEWAH", "GLASSES RESTING ON TOP OF HEAD", "WOVEN STRAW BAG", "SILVER VINTAGE DIGITAL COMPACT CAMERA", "OVER-EAR HEADPHONES", "BAG WITH CUTE PLUSH CHARM", "RED BANDANA", "CLEAR SQUARE GLASSES", "WHITE SLING BAG", "COLORFUL CROCHET BUCKET HAT", "WIRED EARPHONES", "THICK BLACK SQUARE GLASSES", "BLACK BEANIE WITH WHITE GRAPHICS", "WHITE OVAL SUNGLASSES", "TINY BLACK SUNGLASSES", "STRAW HAT", "COMPACT CUSHION MIRROR", "FISHNET TIGHTS", "CUTE PLUSH TOY CHARM ON PHONE"] 
                 }
             },
             "HIPSTER_2010S": {
@@ -633,14 +672,14 @@
                     tops: ["PLAID FLANNEL BUTTONED UP", "V-NECK T-SHIRT", "LIGHT DENIM JACKET", "INDIE BAND T-SHIRT", "CHAMBRAY SHIRT", "CARDIGAN OVER TEE", "MUSTARD YELLOW CARDIGAN", "SUSPENDERS OVER T-SHIRT", "GRAPHIC SWEATER", "GREEN FLANNEL OVER GRAPHIC TEE", "HEAVY METAL BAND T-SHIRT", "DARK GREY TURTLENECK SWEATER", "TIGHT WHITE BABY TEE WITH A RED STAR"], 
                     bottoms: ["TIGHT SKINNY JEANS", "CHINOS ROLLED AT THE ANKLE", "CORDUROY PANTS", "COLORED SKINNY JEANS", "CELANA PENSIL (EXTREMELY TIGHT JEANS)", "RAW SELVEDGE DENIM PANTS", "DENIM JORTS (LONG SHORTS)"], 
                     shoes: ["VANS AUTHENTIC", "CHELSEA BOOTS", "DESERT BOOTS", "CONVERSE HIGH TOPS"], 
-                    acc: ["THICK BLACK RIMMED GLASSES", "SNAPBACK HAT", "BEADED BRACELETS", "LEATHER SATCHEL", "SMOKING A CIGARETTE", "SEPTUM PIERCING", "VINTAGE RED MARLBORO CAP", "STUDDED BELT"] 
+                    acc: ["THICK BLACK RIMMED GLASSES", "SNAPBACK HAT", "BEADED BRACELETS", "LEATHER SATCHEL", "SMOKING A CIGARETTE", "SEPTUM PIERCING", "VINTAGE RED MARLBORO CAP", "STUDDED BELT", "OVER-EAR HEADPHONES"] 
                 },
                 "FEMALE": { 
                     hair: ["LONG STRAIGHT HAIR WITH OMBRE", "MESSY TOP KNOT", "HIJAB WITH ROUND GLASSES", "MESSY THICK SIDE BRAID", "PASTEL PINK DYED HAIR", "FISHTAIL BRAID", "LONG DREADLOCKS", "MESSY TOP KNOT BUN", "TWIN BRAIDS"], 
                     tops: ["PEPLUM TOP", "FLANNEL TIED AROUND WAIST", "STRIPED T-SHIRT", "AZTEC PRINT CARDIGAN", "VINTAGE BAND TEE", "OFF-THE-SHOULDER BLOUSE", "LACE KIMONO CARDIGAN", "PEPLUM TANK TOP", "CHAMBRAY BUTTON DOWN SHIRT", "TIGHT INDIE BAND T-SHIRT", "STRIPED SHIRT UNBUTTONED AT CHEST", "BROWN BARISTA APRON OVER WHITE TEE", "BLACK LEATHER JACKET OVER GREY HOODIE", "OVERSIZED DARK GREY GRAPHIC TEE"], 
                     bottoms: ["HIGH-WAISTED SKINNY JEANS", "DENIM CUTOFF SHORTS", "MAXI SKIRT", "LEGGINGS AS PANTS", "CORDUROY OVERALLS", "SKATER DRESS", "HIGH-LOW SKIRT", "CELANA PENSIL (TIGHT BLACK JEANS)", "BAGGY FADED JEANS"], 
                     shoes: ["CHUKKA BOOTS", "WHITE CONVERSE", "BALLET FLATS", "GLADIATOR SANDALS", "RED ADIDAS SAMBA"], 
-                    acc: ["ROUND HARRY POTTER GLASSES", "OWL NECKLACE", "SLOUCHY BEANIE", "CHOKER", "INFINITY SCARF", "NOSE PIERCING", "SMOKING A CIGARETTE", "CUTE PHONE CASE WITH STICKERS", "GLASSES RESTING ON TOP OF HEAD", "SILVER VINTAGE DIGITAL COMPACT CAMERA", "WIRED EARPHONES", "WHITE OVAL SUNGLASSES", "COMPACT CUSHION MIRROR"] 
+                    acc: ["ROUND HARRY POTTER GLASSES", "OWL NECKLACE", "SLOUCHY BEANIE", "CHOKER", "INFINITY SCARF", "NOSE PIERCING", "SMOKING A CIGARETTE", "GLASSES RESTING ON TOP OF HEAD", "SILVER VINTAGE DIGITAL COMPACT CAMERA", "WIRED EARPHONES", "WHITE OVAL SUNGLASSES", "COMPACT CUSHION MIRROR", "OVER-EAR HEADPHONES", "CUTE PLUSH TOY CHARM ON PHONE"] 
                 }
             },
             "Y2K_2000S": {
@@ -649,14 +688,14 @@
                     tops: ["BAGGY LOCAL DISTRO T-SHIRT", "STRIPED POLO SHIRT WITH POPPED COLLAR", "OVERSIZED SPORTS JERSEY", "PUFFER VEST OVER HOODIE", "LONG SLEEVE UNDER SHORT SLEEVE TEE", "FLAME BUTTON-UP SHIRT", "RED FOOTBALL CLUB JERSEY", "TIGHT WHITE BABY TEE WITH A RED STAR"], 
                     bottoms: ["EXTREMELY BAGGY JEANS", "CARGO SHORTS BELOW THE KNEE", "TRACK PANTS", "BAGGY CAMO PANTS"], 
                     shoes: ["CHUNKY SKATE SHOES", "SLIP-ON CHECKERED VANS", "WHITE AIR FORCE 1S"], 
-                    acc: ["VON DUTCH TRUCKER HAT", "CHAIN WALLET", "SWEATBAND", "PKA SHELL NECKLACE", "LIP PIERCING", "WEARING A CASIO G-SHOCK WATCH", "VINTAGE RED MARLBORO CAP", "STUDDED BELT"] 
+                    acc: ["VON DUTCH TRUCKER HAT", "CHAIN WALLET", "SWEATBAND", "PKA SHELL NECKLACE", "LIP PIERCING", "WEARING A CASIO G-SHOCK WATCH", "VINTAGE RED MARLBORO CAP", "STUDDED BELT", "OVER-EAR HEADPHONES"] 
                 },
                 "FEMALE": { 
                     hair: ["CHUNKY BLONDE HIGHLIGHTS", "ZIG-ZAG PARTING", "SIMPLE SQUARE HIJAB", "HAIR WITH BUTTERFLY CLIPS", "MICRO BRAIDS", "CRIMPED HAIR", "TWO THIN FRONT BRAIDS"], 
                     tops: ["VELOUR TRACKSUIT TOP", "HALTER CROP TOP", "TIGHT AIRBRUSHED TEE", "BABY DOLL TOP", "TUBE TOP", "CROP TEE WITH RHINESTONES", "BOLERO JACKET", "CAMISOLE WITH LACE TRIM", "GRAPHIC HOODIE ZIP-UP", "TIE-FRONT CROP CARDIGAN", "TIGHT GRAPHIC POP-PUNK BAND TEE", "WHITE TANK TOP WITH LACE TRIM", "TIGHT GRAPHIC RINGER BABY TEE", "OFF-SHOULDER LIGHT GREY TOP", "TIGHT GRAPHIC TANK TOP"], 
                     bottoms: ["LOW-RISE FLARE JEANS", "PLEATED DENIM MICRO-SKIRT", "BAGGY CARGO PANTS", "CAPRI PANTS", "LOW-RISE CORDUROY PANTS", "CARGO MINI SKIRT", "LOW-RISE CUTBRAY (FLARE) JEANS"], 
                     shoes: ["PLATFORM FLIP-FLOPS", "WEDGE SNEAKERS", "CHUNKY BOOTS"], 
-                    acc: ["TINTED FRAMELESS SUNGLASSES", "BEJEWELED FLIP PHONE", "CHOKER", "JELLY BRACELETS", "MINI BACKPACK", "BELLY BUTTON PIERCING", "SILVER VINTAGE DIGITAL COMPACT CAMERA", "THICK BLACK SQUARE GLASSES", "TINY BLACK SUNGLASSES", "COMPACT CUSHION MIRROR"] 
+                    acc: ["TINTED FRAMELESS SUNGLASSES", "BEJEWELED FLIP PHONE", "CHOKER", "JELLY BRACELETS", "MINI BACKPACK", "BELLY BUTTON PIERCING", "SILVER VINTAGE DIGITAL COMPACT CAMERA", "THICK BLACK SQUARE GLASSES", "TINY BLACK SUNGLASSES", "COMPACT CUSHION MIRROR", "OVER-EAR HEADPHONES", "CUTE PLUSH TOY CHARM ON PHONE"] 
                 }
             },
             "GRUNGE_1990S": {
@@ -804,7 +843,7 @@
                 data.focal = "FRONT-FACING SELFIE LENS OR 0.5X ULTRA WIDE";
                 data.angle = getRandom(["HIGH-ANGLE SELFIE (ARM EXTENDED ABOVE HEAD)", "LOW-ANGLE SELFIE (CHIN POV)", "CLOSE-UP DISTORTED 0.5x LENS", "WIDE ANGLE DISTORTED SELFIE WITH FINGER PARTIALLY BLOCKING THE LENS EDGE", "LOW ANGLE POV LOOKING DOWN AT THE CAMERA AS IF STEPPING ON IT"]);
                 if (numSubjects === 1) {
-                    data.pose = getRandom(["MAKING A PEACE SIGN CLOSE TO FACE", "DUCK FACE OR POUTING PLAYFULLY", "RESTING CHIN ON HAND", "MAKING A K-POP FINGER HEART GESTURE", "FLASHING A ROCK-ON GESTURE", "RESTING HEAD ON HAND, LOOKING EXHAUSTED", "GIVING A DOUBLE THUMBS UP ENTHUSIASTICALLY", "POINTING INDEX FINGER DIRECTLY AT THE CAMERA LENS CAUSING FOREGROUND DISTORTION", "SITTING CROSS-LEGGED ON A BENCH MAKING A POUTING FACE"]);
+                    data.pose = getRandom(["MAKING A PEACE SIGN CLOSE TO FACE", "DUCK FACE OR POUTING PLAYFULLY", "RESTING CHIN ON HAND", "MAKING A K-POP FINGER HEART GESTURE", "FLASHING A ROCK-ON GESTURE", "RESTING HEAD ON HAND, LOOKING EXHAUSTED", "GIVING A DOUBLE THUMBS UP ENTHUSIASTICALLY", "POINTING INDEX FINGER DIRECTLY AT THE CAMERA LENS CAUSING FOREGROUND DISTORTION", "SITTING CROSS-LEGGED ON A BENCH MAKING A POUTING FACE", "TAKING SELFIE WHILE COVERING HALF OF FACE WITH SMARTPHONE AND HOLDING A SODA CAN"]);
                     data.gaze = getRandom(["LOOKING DIRECTLY INTO THE LENS", "LOOKING SLIGHTLY OFF AT THE SCREEN"]);
                 } else if (genderVal === "COUPLE") {
                     data.pose = getRandom(["COUPLE SELFIE, CHEEKS PRESSED TOGETHER", "WOMAN HOLDING THE CAMERA, MAN SMILING BEHIND HER", "DOING MATCHING FINGER HEARTS INTO THE CAMERA", "MAN KISSING THE WOMAN'S CHEEK WHILE SHE TAKES THE SELFIE", "GIRL PLAYFULLY SQUISHING GUY'S CHEEKS", "PIGGYBACK RIDE INDOORS, BIG SMILES", "COUPLE SELFIE ON A PADDLEBOARD IN THE SEA"]);
@@ -848,7 +887,7 @@
                 if (numSubjects === 1) {
                     data.pose = getRandom(["HOLDING PHONE WITH ONE HAND OBSCURING HALF THE FACE", "SITTING ON THE FLOOR CROSSED LEGS TAKING A FULL BODY MIRROR SELFIE", "FLASH OBSCURING THE FACE IN THE MIRROR", "STANDING FULL BODY, PHONE COVERING FACE", "SITTING CROSS-LEGGED ON A BED TAKING A MIRROR SELFIE", "PULLING DOWN TINY SUNGLASSES TO LOOK OVER THEM INTO THE MIRROR", "HOLDING A VINTAGE DIGICAM WITH FLASH ON IN FRONT OF THE FACE"]);
                 } else if (genderVal === "COUPLE") {
-                    data.pose = getRandom(["COUPLE MIRROR SELFIE, MAN STANDING BEHIND THE WOMAN", "WOMAN HOLDING PHONE, MAN RESTING CHIN ON HER SHOULDER", "COUPLE POSING STYLISHLY IN FRONT OF THE MIRROR"]);
+                    data.pose = getRandom(["COUPLE MIRROR SELFIE, MAN STANDING BEHIND THE WOMAN", "WOMAN HOLDING PHONE, MAN RESTING CHIN ON HER SHOULDER", "COUPLE POSING STYLISHLY IN FRONT OF THE MIRROR", "ELEVATOR COUPLE MIRROR SELFIE, MAN TAKING PHOTO COVERING FACE"]);
                 } else {
                     data.pose = getRandom([`GROUP MIRROR SELFIE OF ${numSubjects}, CROWDING THE MIRROR`, "ONE HOLDING THE PHONE WHILE OTHERS POSE SILLY BEHIND THEM IN THE REFLECTION", "FRIENDS HUGGING FROM BEHIND IN THE MIRROR REFLECTION"]);
                 }
@@ -907,6 +946,36 @@
                     data.pose = getRandom([`GROUP OF ${numSubjects} POSING TOGETHER FOR A COMMEMORATIVE PHOTO`, "STANDING IN A ROW POSING FOR THE CAMERA", "GROUP HUGGING AND SMILING DIRECTLY AT THE PHOTOGRAPHER", "POSED GROUP SHOT, EVERYONE AWARE OF THE CAMERA"]);
                     data.gaze = "EVERYONE LOOKING DIRECTLY AT THE CAMERA AND POSING";
                     data.vibe = "A DELIBERATELY POSED SCENARIO PHOTOGRAPH, COMMEMORATIVE SNAPSHOT";
+                }
+            }
+
+            // MENGAPLIKASIKAN ANGLE & SHOT CONTROL BARU
+            const angleVal = document.getElementById('angleSelect')?.value || "RANDOM";
+            if (angleVal !== "RANDOM") {
+                const angleMap = {
+                    "EYE_LEVEL": "EYE-LEVEL STRAIGHT ON",
+                    "HIGH_ANGLE": "HIGH ANGLE POV, LOOKING DOWN SLIGHTLY AT SUBJECT",
+                    "LOW_ANGLE": "LOW ANGLE POV, LOOKING UP SLIGHTLY AT SUBJECT",
+                    "BIRD_EYE": "BIRD'S EYE VIEW, EXTREME TOP-DOWN OVERHEAD SHOT",
+                    "WORM_EYE": "WORM'S EYE / FROG EYE VIEW, EXTREME LOW ANGLE FROM THE GROUND",
+                    "DUTCH_ANGLE": "DUTCH ANGLE / CANTED ANGLE, TILTED HORIZON FOR EDGY VIBE",
+                    "OTS": "OVER THE SHOULDER (OTS) SHOT, LOOKING PAST SOMEONE",
+                    "POV": "FIRST PERSON POINT OF VIEW (POV)",
+                    "ELS": "EXTREME LONG SHOT, SUBJECT IS VERY SMALL IN THE VAST ENVIRONMENT",
+                    "LS": "LONG SHOT, FULL BODY VISIBLE HEAD TO TOE",
+                    "MLS": "MEDIUM LONG SHOT, SHOT FROM THE KNEES UP",
+                    "MS": "MEDIUM SHOT, SHOT FROM THE WAIST UP",
+                    "MCU": "MEDIUM CLOSE-UP, SHOT FROM THE CHEST UP",
+                    "CU": "CLOSE-UP SHOT, FOCUSING TIGHTLY ON FACE AND SHOULDERS",
+                    "ECU": "EXTREME CLOSE-UP, EXTREME DETAIL FOCUS"
+                };
+                
+                if(["ELS", "LS", "MLS", "MS", "MCU", "CU", "ECU"].includes(angleVal)) {
+                    data.angle += ", " + angleMap[angleVal];
+                    if(angleVal === "ELS" || angleVal === "LS") data.focal = "ULTRA WIDE ANGLE LENS (14MM-24MM)";
+                    if(angleVal === "CU" || angleVal === "ECU") data.focal = "TELEPHOTO MACRO / PORTRAIT LENS";
+                } else {
+                    data.angle = angleMap[angleVal];
                 }
             }
 
@@ -1303,37 +1372,16 @@
                     tPool = eraData[pGender.genderId].tops; bPool = eraData[pGender.genderId].bottoms; sPool = eraData[pGender.genderId].shoes; aPool = eraData[pGender.genderId].acc; hPool = eraData[pGender.genderId].hair;
                 }
 
-                // SMART LOGIC & FILTERING UNTUK BAJU DAN AKSESORIS
                 if (setting && setting.env) {
-                    // Filter Piyama & Sleepwear
                     const isHome = envName.includes("BEDROOM") || envName.includes("KOS") || envName.includes("ROOM") || envName.includes("COMPOUND") || envName.includes("CABIN") || envName.includes("COUCH");
                     if (!isHome) {
                         tPool = tPool.filter(t => !t.includes("PAJAMA") && !t.includes("SLEEPWEAR"));
                         bPool = bPool.filter(b => !b.includes("PAJAMA") && !b.includes("LOUNGEWEAR"));
                     }
-
-                    // Strict Accessory Filtering (Preventing Gamepads in Forests, etc)
-                    if (!envName.includes("BEDROOM") && !envName.includes("KOS") && !envName.includes("COUCH") && !envName.includes("ROOM")) {
-                        aPool = aPool.filter(a => !a.includes("VIDEO GAME") && !a.includes("CONTROLLER") && !a.includes("PS STICK"));
-                    }
-                    if (!envName.includes("TENNIS")) {
-                        aPool = aPool.filter(a => !a.includes("TENNIS RACKET"));
-                    }
-                    if (!envName.includes("BOAT") && !envName.includes("RIVER") && !envName.includes("SEA") && !envName.includes("BEACH") && !envName.includes("WATER")) {
-                        aPool = aPool.filter(a => !a.includes("LIFE VEST") && !a.includes("PADDLE"));
-                    }
-                    if (!envName.includes("STREET") && !envName.includes("SKATEPARK") && !envName.includes("PARKING") && !envName.includes("ROAD")) {
-                        aPool = aPool.filter(a => !a.includes("SKATEBOARD"));
-                    }
-                    if (!envName.includes("CLUB") && !envName.includes("BAR") && !envName.includes("DINER") && !envName.includes("WARUNG") && !envName.includes("CAFE") && !envName.includes("MINIMARKET")) {
-                        aPool = aPool.filter(a => !a.includes("BEER GLASS") && !a.includes("COCA-COLA CAN"));
-                    }
-
                     const isNightlife = envName.includes("CLUB") || envName.includes("BAR") || envName.includes("NIGHTCLUB") || envName.includes("FESTIVAL");
                     if (isNightlife) {
                         aPool = aPool.filter(a => !a.includes("STANLEY CUP") && !a.includes("TOTE BAG") && !a.includes("LOLLIPOP"));
                     }
-                    
                     const isBathtub = envName.includes("BATHTUB");
                     if (isBathtub && pGender.genderId === "MALE") {
                         tPool.push("FULL BLACK SUIT AND TIE"); 
@@ -1601,6 +1649,23 @@
                         shotData.gaze = "LOOKING AT THE PHONE SCREEN";
                         shotData.vibe = "MOODY CINEMATIC LATE NIGHT SCREEN GLOW";
                     }
+                    if (envName.includes("SITTING ON A RED PLASTIC CHAIR")) {
+                        if (pGender.genderId === "FEMALE") {
+                            tPool.push("TIGHT GRAPHIC TANK TOP");
+                            bPool.push("BAGGY FADED JEANS");
+                            sPool.push("RED AND WHITE CHUNKY SNEAKERS");
+                            aPool.push("TOTE BAG");
+                            shotData.pose = "SITTING ON A RED PLASTIC CHAIR ON THE SIDEWALK, LEGS CROSSED, LOOKING AWAY SMILING";
+                            shotData.angle = "EYE-LEVEL STRAIGHT ON";
+                        }
+                    }
+                    if (envName.includes("COMMUTER TRAIN HOLDING HANDRAIL")) {
+                        if (pGender.genderId === "FEMALE") {
+                            tPool.push("PUFFER JACKET");
+                            aPool.push("OVER-EAR HEADPHONES");
+                            shotData.pose = "STANDING IN THE TRAIN HOLDING THE OVERHEAD HANDRAIL, LOOKING AROUND NATURALLY";
+                        }
+                    }
                 }
 
                 pWardrobe = {
@@ -1706,7 +1771,7 @@
             }
 
             // SMART NOISE & AMATEUR LOGIC MENDALAM BERDASARKAN WAKTU/LOKASI
-            if (timeStr === "NIGHT" || (setting && setting.env && (setting.env.includes("CLUB") || setting.env.includes("DARK") || setting.env.includes("ALLEY")))) {
+            if (timeStr === "NIGHT" || (setting && setting.env && (setting.env.includes("CLUB") || setting.env.includes("DARK") || setting.env.includes("ALLEY") || setting.env.includes("NIGHT")))) {
                 finalFlaws += ", HEAVY ISO SMARTPHONE NOISE, COLOR FRINGING, GRAINY SHADOWS, POOR LOW-LIGHT ARTIFACTS";
                 finalRenderEngine += ", STRUGGLING PHONE SENSOR IN LOW LIGHT";
                 
@@ -1913,7 +1978,7 @@
 
         // --- FUNGSI RESET DENGAN SMART LOCK ---
         function resetAndGenerate() {
-            const dropdownIds = ['numSelect', 'ageSelect', 'holidaySelect', 'eraSelect', 'genderSelect', 'demoSelect', 'shotSelect', 'locSelect', 'timeSelect', 'weatherSelect', 'aestheticSelect', 'strictSelect', 'bodyTypeSelect', 'hairAccSelect'];
+            const dropdownIds = ['numSelect', 'ageSelect', 'holidaySelect', 'eraSelect', 'locSelect', 'angleSelect', 'genderSelect', 'demoSelect', 'shotSelect', 'timeSelect', 'weatherSelect', 'aestheticSelect', 'strictSelect', 'bodyTypeSelect', 'hairAccSelect'];
             
             dropdownIds.forEach(id => {
                 const el = document.getElementById(id);
@@ -1922,6 +1987,7 @@
                     else if (id === 'aestheticSelect') el.value = "DEFAULT";
                     else if (id === 'strictSelect') el.value = "FLEXIBLE";
                     else if (id === 'bodyTypeSelect') el.value = "MATCH";
+                    else if (id === 'locSelect') el.value = "RANDOM";
                     else el.value = "RANDOM";
                 }
             });
@@ -1936,6 +2002,9 @@
                 customScenarioInput.value = "";
             }
             toggleScenarioInput(); 
+
+            // Handle location dropdown update if era changed
+            updateLocationDropdown();
             
             const eraSelect = document.getElementById('eraSelect');
             if (eraSelect && eraSelect.dataset.locked !== "true") {
@@ -1968,6 +2037,53 @@
             generatePrompt();
         }
 
+        // --- FUNGSI UPDATE DROPDOWN LOKASI CASCADING ---
+        function updateLocationDropdown() {
+            const locSelect = document.getElementById('locSelect');
+            const eraSelect = document.getElementById('eraSelect');
+            if (!locSelect || !eraSelect) return;
+
+            const isLocked = locSelect.dataset.locked === "true";
+            const currentVal = locSelect.value;
+            const eraVal = eraSelect.value;
+
+            if (isLocked) return;
+
+            locSelect.innerHTML = '<option value="RANDOM">🎲 Acak Lokasi (Sesuai Era)</option>';
+
+            if (eraVal === "RANDOM") {
+                const opt = document.createElement('option');
+                opt.disabled = true;
+                opt.textContent = "--- Pilih Era spesifik untuk melihat daftar ---";
+                locSelect.appendChild(opt);
+            } else {
+                let hasLocations = false;
+                settings.forEach((s, index) => {
+                    if (s.era_id === eraVal) {
+                        hasLocations = true;
+                        const opt = document.createElement('option');
+                        opt.value = index;
+                        let labelName = s.env;
+                        if(labelName.length > 35) labelName = labelName.substring(0, 32) + '...';
+                        opt.textContent = labelName;
+                        locSelect.appendChild(opt);
+                    }
+                });
+                
+                if (!hasLocations) {
+                    const opt = document.createElement('option');
+                    opt.disabled = true;
+                    opt.textContent = "Tidak ada lokasi untuk era ini.";
+                    locSelect.appendChild(opt);
+                }
+            }
+            
+            // Coba kembalikan nilai sebelumnya jika masih relevan
+            if (Array.from(locSelect.options).some(opt => opt.value === currentVal)) {
+                locSelect.value = currentVal;
+            }
+        }
+
         // --- INIT DROPDOWNS ---
         function initDropdowns() {
             try {
@@ -1983,48 +2099,9 @@
                         });
                     }
                 }
+                
+                updateLocationDropdown();
 
-                const locSelect = document.getElementById('locSelect');
-                if (locSelect && locSelect.appendChild) {
-                    if (!locSelect.options || locSelect.options.length <= 1) {
-                        locSelect.innerHTML = '<option value="RANDOM">🎲 Acak Sesuai Era</option>';
-                        const eras = ["MODERN_2020S", "TIMELESS_BASIC", "HIPSTER_2010S", "Y2K_2000S", "GRUNGE_1990S"];
-                        const eraNames = {"MODERN_2020S": "2020s (Modern)", "TIMELESS_BASIC": "Timeless (Bebas Era)", "HIPSTER_2010S": "2010s (Indie)", "Y2K_2000S": "2000s (Y2K)", "GRUNGE_1990S": "1990s (Grunge)"};
-
-                        eras.forEach(era => {
-                            const group = document.createElement('optgroup');
-                            group.label = `--- Era ${eraNames[era]} ---`;
-                            
-                            settings.forEach((s, index) => {
-                                if (s.era_id === era) {
-                                    const opt = document.createElement('option');
-                                    opt.value = index;
-                                    let labelName = s.env;
-                                    if(labelName.length > 30) labelName = labelName.substring(0, 27) + '...';
-                                    opt.textContent = labelName;
-                                    group.appendChild(opt);
-                                }
-                            });
-                            locSelect.appendChild(group);
-                        });
-                    }
-                    
-                    locSelect.addEventListener('change', (e) => {
-                        const eraSelect = document.getElementById('eraSelect');
-                        if (!eraSelect) return;
-                        if(e.target.value !== "RANDOM") {
-                            const selectedSetting = settings[parseInt(e.target.value)];
-                            if (selectedSetting) {
-                                eraSelect.value = selectedSetting.era_id;
-                                eraSelect.disabled = true;
-                                eraSelect.classList.add('opacity-50', 'cursor-not-allowed');
-                            }
-                        } else if (eraSelect.dataset.locked !== "true") {
-                            eraSelect.disabled = false;
-                            eraSelect.classList.remove('opacity-50', 'cursor-not-allowed');
-                        }
-                    });
-                }
             } catch(e) {
                 console.error("Initialization warning: ", e);
             }
