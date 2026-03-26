@@ -37,6 +37,14 @@
         .locked-label i {
             color: #ef4444; /* red-500 */
         }
+        optgroup {
+            font-weight: bold;
+            color: #fbbf24;
+            background-color: #0f172a;
+        }
+        option {
+            color: #e2e8f0;
+        }
         /* Custom Scrollbar for List Boxes */
         .listbox-scroll::-webkit-scrollbar { width: 6px; }
         .listbox-scroll::-webkit-scrollbar-track { background: #0f172a; border-radius: 8px; }
@@ -62,8 +70,8 @@
     <div id="mainContent" class="w-full max-w-7xl blur-md pointer-events-none transition-all duration-500">
         <!-- Header -->
         <div class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2"><i class="fa-solid fa-camera-retro text-red-500 mr-2"></i> Indonesian Amateur Shot V3.0</h1>
-            <p class="text-slate-400">Director UI + Angle Control + Ratusan Skenario Gen-Z + Smart Lock.</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2"><i class="fa-solid fa-camera-retro text-red-500 mr-2"></i> Indonesian Amateur Shot V3.1</h1>
+            <p class="text-slate-400">Director UI + Dynamic Angle Control + Ratusan Skenario Gen-Z.</p>
         </div>
 
         <!-- NEW UI DASHBOARD: FILTERS & PARAMETERS -->
@@ -128,15 +136,27 @@
             </div>
 
             <!-- GROUP 2: THE BIG LIST BOXES (SCROLLABLE MENUS) -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg text-sm">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg text-sm">
                 
-                <!-- Box 1: Era & Location -->
+                <!-- Box 1: Tipe Shot -->
+                <div class="flex flex-col h-[400px]">
+                    <label class="flex justify-between items-center text-emerald-400 mb-1 font-semibold text-xs transition-colors">
+                        <span><i class="fa-solid fa-camera"></i> Tipe Shot (Gaya)</span>
+                        <i class="fa-solid fa-lock-open cursor-pointer hover:text-white" onclick="toggleLock('shotSelectHidden', this)"></i>
+                    </label>
+                    <input type="hidden" id="shotSelectHidden" value="RANDOM" data-locked="false">
+                    <div id="shotListContainer" class="flex-1 overflow-y-auto listbox-scroll bg-slate-900 border border-emerald-600/50 rounded-lg p-2 flex flex-col gap-1.5 transition-all">
+                        <!-- JS populated -->
+                    </div>
+                </div>
+
+                <!-- Box 2: Era & Location -->
                 <div class="flex flex-col h-[400px]">
                     <label class="flex justify-between items-center text-blue-400 mb-1 font-semibold text-xs transition-colors">
                         <span><i class="fa-solid fa-clock-rotate-left"></i> Era / Zaman</span>
                         <i class="fa-solid fa-lock-open cursor-pointer hover:text-white" onclick="toggleLock('eraSelect', this)"></i>
                     </label>
-                    <select id="eraSelect" onchange="renderLocationList()" class="w-full bg-slate-900 text-blue-200 border border-blue-600 rounded p-2 outline-none focus:border-blue-400 transition-colors cursor-pointer font-bold mb-3">
+                    <select id="eraSelect" onchange="renderLocationList()" class="w-full bg-slate-900 text-blue-200 border border-blue-600 rounded p-2 outline-none focus:border-blue-400 transition-colors cursor-pointer font-bold mb-3 shrink-0">
                         <option value="RANDOM">🎲 Acak Era Otomatis</option>
                         <option value="MODERN_2020S">2020s (Modern / Gen-Z)</option>
                         <option value="TIMELESS_BASIC">Timeless / Basic Kasual</option>
@@ -155,7 +175,7 @@
                     </div>
                 </div>
 
-                <!-- Box 2: Angle & Shot -->
+                <!-- Box 3: Angle & Shot -->
                 <div class="flex flex-col h-[400px]">
                     <label class="flex justify-between items-center text-orange-400 mb-1 font-semibold text-xs transition-colors">
                         <span><i class="fa-solid fa-video"></i> Angle & Shot Size</span>
@@ -167,7 +187,7 @@
                     </div>
                 </div>
 
-                <!-- Box 3: Aesthetic -->
+                <!-- Box 4: Aesthetic -->
                 <div class="flex flex-col h-[400px]">
                     <label class="flex justify-between items-center text-purple-400 mb-1 font-semibold text-xs transition-colors">
                         <span><i class="fa-solid fa-wand-magic-sparkles"></i> Filter / Aesthetic</span>
@@ -182,23 +202,7 @@
             </div>
 
             <!-- GROUP 3: TECHNICALS & SCENARIO -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-7 gap-4 bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg text-sm items-end">
-                <div>
-                    <label class="flex justify-between items-center text-slate-400 mb-1 font-semibold text-xs transition-colors">
-                        <span>Tipe Shot (Gaya)</span>
-                        <i class="fa-solid fa-lock-open cursor-pointer hover:text-white" onclick="toggleLock('shotSelect', this)"></i>
-                    </label>
-                    <select id="shotSelect" onchange="toggleScenarioInput()" class="w-full bg-slate-900 text-slate-200 border border-slate-600 rounded p-2 outline-none focus:border-red-500 cursor-pointer">
-                        <option value="RANDOM">🎲 Acak</option>
-                        <option value="CANDID_INTENTIONAL">Candid Sengaja (Pura-pura)</option>
-                        <option value="CANDID_UNAWARE">Candid Asli (Diam-diam)</option>
-                        <option value="FRONT_CAMERA_SELFIE">Selfie Kamera Depan</option>
-                        <option value="CLOSE_UP_SELFIE">Close-Up Selfie (Fokus Wajah)</option>
-                        <option value="MIRROR_SELFIE">Mirror Selfie</option>
-                        <option value="ACCIDENTAL_AWKWARD_SHOT">Accidental / Blur</option>
-                        <option value="POSED_SCENARIO" class="text-green-300 font-bold">📸 Berpose (Posed)</option>
-                    </select>
-                </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg text-sm items-end">
                 <div>
                     <label class="flex justify-between items-center text-yellow-400 mb-1 font-semibold text-xs transition-colors">
                         <span><i class="fa-solid fa-star"></i> Hari Raya</span>
@@ -238,6 +242,7 @@
                         <option value="RAINING">Hujan (Wet)</option>
                     </select>
                 </div>
+                
                 <div>
                     <label class="flex justify-between items-center text-slate-400 mb-1 font-semibold text-xs transition-colors">
                         <span>Rambut & Aksesoris</span>
@@ -262,7 +267,7 @@
                     <label class="block text-red-400 mb-1 font-semibold text-xs"><i class="fa-solid fa-weight-hanging"></i> Bobot Strict</label>
                     <input type="number" id="strictWeight" min="0.1" max="1.0" step="0.1" value="1.0" class="w-full bg-slate-900 text-slate-200 border border-red-600 rounded p-2 outline-none focus:border-red-500 transition-colors">
                 </div>
-                <div class="col-span-1 sm:col-span-2 xl:col-span-3">
+                <div class="col-span-1 sm:col-span-2">
                     <label class="flex justify-between items-center text-green-400 mb-1 font-semibold text-xs transition-colors">
                         <span><i class="fa-solid fa-user-tag"></i> Artis/Tokoh Utama (Opsional)</span>
                         <i class="fa-solid fa-lock-open cursor-pointer hover:text-white" onclick="toggleLock('customNameGlobal', this)"></i>
@@ -270,7 +275,7 @@
                     <input type="text" id="customNameGlobal" oninput="handleGlobalNameInput()" placeholder="Cth: Reza Rahadian" class="w-full bg-slate-900 text-green-300 border border-green-700 rounded p-2 outline-none focus:border-green-500 transition-colors placeholder-slate-500">
                 </div>
                 <!-- Skenario Spesifik Container -->
-                <div id="scenarioContainer" class="hidden col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-5 xl:col-span-4">
+                <div id="scenarioContainer" class="hidden col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-4">
                     <label class="flex justify-between items-center text-green-400 mb-1 font-semibold text-xs transition-colors">
                         <span><i class="fa-solid fa-clapperboard"></i> Skenario / Pose Spesifik (Custom)</span>
                         <i class="fa-solid fa-lock-open cursor-pointer hover:text-white" onclick="toggleLock('customScenarioInput', this)"></i>
@@ -769,17 +774,46 @@
             syncLabelStyling(container);
         }
 
+        function renderShotList() {
+            const container = document.getElementById('shotListContainer');
+            const shotInput = document.getElementById('shotSelectHidden');
+            if(!container || !shotInput) return;
+            if(shotInput.dataset.locked === "true") return;
+
+            const val = shotInput.value;
+            const shots = [
+                {v: "RANDOM", l: "🎲 Acak Otomatis", s: "Biarkan AI menentukan gaya foto"},
+                {v: "CANDID_INTENTIONAL", l: "Candid Sengaja (Pura-pura)", s: "Sadar kamera, tapi pura-pura tidak lihat"},
+                {v: "CANDID_UNAWARE", l: "Candid Asli (Diam-diam)", s: "Benar-benar difoto diam-diam"},
+                {v: "FRONT_CAMERA_SELFIE", l: "Selfie Kamera Depan", s: "Diambil menggunakan kamera depan HP"},
+                {v: "CLOSE_UP_SELFIE", l: "Close-Up Selfie (Fokus Wajah)", s: "Selfie sangat dekat ke wajah"},
+                {v: "MIRROR_SELFIE", l: "Mirror Selfie", s: "Selfie menghadap cermin"},
+                {v: "ACCIDENTAL_AWKWARD_SHOT", l: "Accidental / Blur", s: "Foto gagal, ngeblur, estetik berantakan"},
+                {v: "POSED_SCENARIO", l: "📸 Berpose (Posed / Scenario)", s: "Foto terkonsep / mengarah ke kamera"}
+            ];
+
+            let html = "";
+            shots.forEach(s => { 
+                html += createRadioOption('shotRadio', s.v, s.l, val, "document.getElementById('shotSelectHidden').value = this.value; renderAngleList(); toggleScenarioInput();", s.s); 
+            });
+
+            container.innerHTML = html;
+            syncLabelStyling(container);
+        }
+
+        // DYNAMIC ANGLE FILTERING BERDASARKAN SHOT TYPE
         function renderAngleList() {
             const container = document.getElementById('angleListContainer');
             const angleInput = document.getElementById('angleSelect');
+            const shotType = document.getElementById('shotSelectHidden')?.value || "RANDOM";
+            
             if(!container || !angleInput) return;
             if(angleInput.dataset.locked === "true") return;
 
-            const val = angleInput.value;
-            let html = createRadioOption('angleRadio', 'RANDOM', '🎲 Acak Otomatis', val, "document.getElementById('angleSelect').value = this.value", "Ikuti skenario default");
+            const currentVal = angleInput.value;
+            let html = createRadioOption('angleRadio', 'RANDOM', '🎲 Acak Otomatis', currentVal, "document.getElementById('angleSelect').value = this.value", "Ikuti skenario default");
 
-            html += `<div class="text-xs font-bold text-orange-400 mt-3 mb-1 px-2 border-b border-slate-700 pb-1">Sudut Kamera (Angle)</div>`;
-            const angles = [
+            const allAngles = [
                 {v: "TOP_DOWN", l: "Top Down (Lurus Atas)", s: "90 derajat dari atas kepala"},
                 {v: "HIGH_ANGLE", l: "High Angle (Sudut Tinggi)", s: "Kamera menunduk ke subjek"},
                 {v: "EYE_LEVEL", l: "Eye Level / Front", s: "Sejajar lurus dengan mata"},
@@ -792,10 +826,8 @@
                 {v: "SHOULDER_LEVEL", l: "Shoulder Level", s: "Sejajar dengan bahu"},
                 {v: "HIP_LEVEL", l: "Hip Level", s: "Sejajar dengan pinggang"}
             ];
-            angles.forEach(a => { html += createRadioOption('angleRadio', a.v, a.l, val, "document.getElementById('angleSelect').value = this.value", a.s); });
 
-            html += `<div class="text-xs font-bold text-orange-400 mt-3 mb-1 px-2 border-b border-slate-700 pb-1">Jarak & Lensa (Shot Size)</div>`;
-            const sizes = [
+            const allSizes = [
                 {v: "ELS", l: "Extreme Long Shot (ELS)", s: "Sangat jauh, subjek kecil"},
                 {v: "LS", l: "Long Shot (LS)", s: "Full Body / Ujung kepala-kaki"},
                 {v: "MLS", l: "Medium Long Shot (MLS)", s: "Dari lutut ke atas"},
@@ -809,7 +841,40 @@
                 {v: "FISHEYE", l: "Fisheye Distortion", s: "Lensa aksi cembung ekstrem"},
                 {v: "CCTV", l: "CCTV Security Camera", s: "Efek kamera pengawas sudut atas"}
             ];
-            sizes.forEach(a => { html += createRadioOption('angleRadio', a.v, a.l, val, "document.getElementById('angleSelect').value = this.value", a.s); });
+
+            // SMART FILTER LOGIC
+            let allowedAngles = allAngles.map(a => a.v);
+            let allowedSizes = allSizes.map(a => a.v);
+
+            if (shotType === "FRONT_CAMERA_SELFIE") {
+                allowedAngles = ["HIGH_ANGLE", "EYE_LEVEL", "LOW_ANGLE", "DUTCH_ANGLE", "WORM_EYE", "TOP_DOWN"];
+                allowedSizes = ["MS", "MCU", "CU", "WIDE_SHOT", "PORTRAIT_SHOT", "FISHEYE"];
+            } else if (shotType === "CLOSE_UP_SELFIE") {
+                allowedAngles = ["HIGH_ANGLE", "EYE_LEVEL", "LOW_ANGLE", "DUTCH_ANGLE"];
+                allowedSizes = ["CU", "ECU", "PORTRAIT_SHOT", "WIDE_SHOT", "FISHEYE", "MACRO"];
+            } else if (shotType === "MIRROR_SELFIE") {
+                allowedAngles = ["EYE_LEVEL", "HIGH_ANGLE", "LOW_ANGLE", "DUTCH_ANGLE", "HIP_LEVEL"];
+                allowedSizes = ["LS", "MLS", "MS", "MCU", "CU", "WIDE_SHOT", "PORTRAIT_SHOT", "FISHEYE"];
+            }
+
+            // Validasi current val (Reset ke RANDOM jika tidak valid)
+            let isCurrentValid = (currentVal === "RANDOM") || allowedAngles.includes(currentVal) || allowedSizes.includes(currentVal);
+            if (!isCurrentValid) {
+                angleInput.value = "RANDOM";
+            }
+
+            // Build HTML
+            const filteredAngles = allAngles.filter(a => allowedAngles.includes(a.v));
+            if (filteredAngles.length > 0) {
+                html += `<div class="text-xs font-bold text-orange-400 mt-3 mb-1 px-2 border-b border-slate-700 pb-1">Sudut Kamera (Angle)</div>`;
+                filteredAngles.forEach(a => { html += createRadioOption('angleRadio', a.v, a.l, angleInput.value, "document.getElementById('angleSelect').value = this.value", a.s); });
+            }
+
+            const filteredSizes = allSizes.filter(a => allowedSizes.includes(a.v));
+            if (filteredSizes.length > 0) {
+                html += `<div class="text-xs font-bold text-orange-400 mt-3 mb-1 px-2 border-b border-slate-700 pb-1">Jarak & Lensa (Shot Size)</div>`;
+                filteredSizes.forEach(a => { html += createRadioOption('angleRadio', a.v, a.l, angleInput.value, "document.getElementById('angleSelect').value = this.value", a.s); });
+            }
 
             container.innerHTML = html;
             syncLabelStyling(container);
@@ -1007,7 +1072,6 @@
                 data.focal = "STANDARD LENS OR WIDE ANGLE PORTRAIT";
                 data.angle = getRandom(["STRAIGHT-ON EYE LEVEL", "SLIGHTLY LOW ANGLE HERO SHOT"]);
                 
-                // LOGIKA JACKPOT
                 if (envName && (envName.includes("CROSSWALK") || envName.includes("ZEBRA CROSS"))) {
                     data.pose = "SITTING CASUALLY ON THE ASPHALT ZEBRA CROSSWALK, LEGS CROSSED OR EXTENDED, HOLDING SUNGLASSES, SQUINTING EYES IN THE SUN";
                     data.angle = "HIGH-ANGLE POV LOOKING DIRECTLY DOWN AT THE SUBJECT (TOP-DOWN SHOT)";
@@ -1083,46 +1147,6 @@
                 }
             }
 
-            // MENGAPLIKASIKAN ANGLE & SHOT CONTROL BARU (DIRECTOR MODE)
-            const angleVal = document.getElementById('angleSelect')?.value || "RANDOM";
-            if (angleVal !== "RANDOM") {
-                const angleMap = {
-                    "CCTV": "SECURITY CAMERA CCTV POV, HIGH ANGLE WIDE CORNER SHOT",
-                    "FISHEYE": "EXTREME FISHEYE LENS DISTORTION, BULGING CENTER",
-                    "MACRO": "MACRO LENS SHOT, EXTREMELY TIGHT FOCUS",
-                    "EYE_LEVEL": "EYE-LEVEL STRAIGHT ON",
-                    "HIGH_ANGLE": "HIGH ANGLE POV, LOOKING DOWN SLIGHTLY AT SUBJECT",
-                    "LOW_ANGLE": "LOW ANGLE POV, LOOKING UP SLIGHTLY AT SUBJECT",
-                    "BIRD_EYE": "BIRD'S EYE VIEW, EXTREME TOP-DOWN OVERHEAD SHOT",
-                    "WORM_EYE": "WORM'S EYE / FROG EYE VIEW, EXTREME LOW ANGLE FROM THE GROUND",
-                    "DUTCH_ANGLE": "DUTCH ANGLE / CANTED ANGLE, TILTED HORIZON FOR EDGY VIBE",
-                    "OTS": "OVER THE SHOULDER (OTS) SHOT, LOOKING PAST SOMEONE",
-                    "POV": "FIRST PERSON POINT OF VIEW (POV)",
-                    "SHOULDER_LEVEL": "SHOULDER LEVEL SHOT",
-                    "HIP_LEVEL": "HIP LEVEL SHOT",
-                    "ELS": "EXTREME LONG SHOT (ELS), SUBJECT IS VERY SMALL IN THE VAST ENVIRONMENT",
-                    "LS": "LONG SHOT (LS), FULL BODY VISIBLE HEAD TO TOE",
-                    "MLS": "MEDIUM LONG SHOT (MLS), SHOT FROM THE KNEES UP",
-                    "MS": "MEDIUM SHOT (MS), SHOT FROM THE WAIST UP",
-                    "MCU": "MEDIUM CLOSE-UP (MCU), SHOT FROM THE CHEST UP",
-                    "CU": "CLOSE-UP (CU) SHOT, FOCUSING TIGHTLY ON FACE AND SHOULDERS",
-                    "ECU": "EXTREME CLOSE-UP (ECU), EXTREME DETAIL FOCUS",
-                    "WIDE_SHOT": "WIDE ANGLE SHOT, CAPTURING A LOT OF BACKGROUND",
-                    "PORTRAIT_SHOT": "PORTRAIT LENS SHOT, SHALLOW DEPTH OF FIELD",
-                    "TELEPHOTO": "TELEPHOTO SHOT, COMPRESSED BACKGROUND"
-                };
-                
-                if(["ELS", "LS", "MLS", "MS", "MCU", "CU", "ECU", "WIDE_SHOT", "PORTRAIT_SHOT", "TELEPHOTO"].includes(angleVal)) {
-                    data.angle += ", " + angleMap[angleVal];
-                    if(angleVal === "ELS" || angleVal === "LS" || angleVal === "WIDE_SHOT") data.focal = "ULTRA WIDE ANGLE LENS (14MM-24MM)";
-                    if(angleVal === "CU" || angleVal === "ECU" || angleVal === "PORTRAIT_SHOT") data.focal = "TELEPHOTO MACRO / PORTRAIT LENS";
-                } else {
-                    data.angle = angleMap[angleVal];
-                    if(angleVal === "FISHEYE") data.focal = "8MM FISHEYE LENS";
-                    if(angleVal === "CCTV") data.focal = "CCTV WIDE ANGLE CAMERA";
-                }
-            }
-
             return data;
         }
 
@@ -1173,6 +1197,7 @@
                 if(selectId === 'locSelect') containerEl = document.getElementById('locListContainer');
                 if(selectId === 'angleSelect') containerEl = document.getElementById('angleListContainer');
                 if(selectId === 'aestheticSelect') containerEl = document.getElementById('aesListContainer');
+                if(selectId === 'shotSelectHidden') containerEl = document.getElementById('shotListContainer');
             }
 
             if (isLocked) {
@@ -1218,7 +1243,7 @@
         }
 
         function toggleScenarioInput() {
-            const shotEl = document.getElementById('shotSelect');
+            const shotEl = document.getElementById('shotSelectHidden');
             const container = document.getElementById('scenarioContainer');
             if (!shotEl || !container) return;
             
@@ -1348,7 +1373,7 @@
             const eraVal = document.getElementById('eraSelect')?.value || "RANDOM";
             const genderVal = document.getElementById('genderSelect')?.value || "RANDOM";
             const demoVal = document.getElementById('demoSelect')?.value || "RANDOM";
-            const shotVal = document.getElementById('shotSelect')?.value || "RANDOM";
+            const shotVal = document.getElementById('shotSelectHidden')?.value || "RANDOM";
             const locVal = document.getElementById('locSelect')?.value || "RANDOM";
             const timeVal = document.getElementById('timeSelect')?.value || "RANDOM";
             const weatherVal = document.getElementById('weatherSelect')?.value || "RANDOM";
@@ -2194,7 +2219,72 @@
             }
         }
 
-        // --- INIT DROPDOWNS & MODALS ---
+        // --- FUNGSI RESET DENGAN SMART LOCK ---
+        function resetAndGenerate() {
+            const dropdownIds = ['numSelect', 'ageSelect', 'holidaySelect', 'eraSelect', 'locSelect', 'angleSelect', 'genderSelect', 'demoSelect', 'shotSelectHidden', 'timeSelect', 'weatherSelect', 'aestheticSelect', 'strictSelect', 'bodyTypeSelect', 'hairAccSelect'];
+            
+            // 1. Reset Global Fields
+            dropdownIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.dataset.locked !== "true") {
+                    if (id === 'holidaySelect') el.value = "RANDOM_HOLIDAY";
+                    else if (id === 'aestheticSelect') el.value = "DEFAULT";
+                    else if (id === 'strictSelect') el.value = "FLEXIBLE";
+                    else if (id === 'bodyTypeSelect') el.value = "MATCH";
+                    else el.value = "RANDOM";
+                }
+            });
+
+            const globalNameInput = document.getElementById('customNameGlobal');
+            if (globalNameInput && globalNameInput.dataset.locked !== "true") {
+                globalNameInput.value = "";
+                handleGlobalNameInput();
+            }
+            const customScenarioInput = document.getElementById('customScenarioInput');
+            if (customScenarioInput && customScenarioInput.dataset.locked !== "true") {
+                customScenarioInput.value = "";
+            }
+            toggleScenarioInput(); 
+            
+            const eraSelect = document.getElementById('eraSelect');
+            if (eraSelect && eraSelect.dataset.locked !== "true") {
+                eraSelect.disabled = false;
+                eraSelect.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+
+            // 2. Reset Advanced Panel Fields
+            const advToggle = document.getElementById('advancedToggle');
+            if(advToggle && advToggle.checked) {
+                const container = document.getElementById('characterRows');
+                if (container) {
+                    const rows = container.children.length;
+                    for(let i=0; i<rows; i++) {
+                        const nameEl = document.getElementById(`adv_name_${i}`);
+                        if (nameEl && nameEl.dataset.locked !== "true") nameEl.value = "";
+                        
+                        const genEl = document.getElementById(`adv_gender_${i}`);
+                        if (genEl && genEl.dataset.locked !== "true") genEl.value = "RANDOM";
+                        
+                        const ageEl = document.getElementById(`adv_age_${i}`);
+                        if (ageEl && ageEl.dataset.locked !== "true") ageEl.value = "RANDOM";
+                        
+                        const demoEl = document.getElementById(`adv_demo_${i}`);
+                        if (demoEl && demoEl.dataset.locked !== "true") demoEl.value = "RANDOM";
+                    }
+                }
+                renderAdvancedRows();
+            }
+            
+            // Sync Radio Buttons UI
+            renderLocationList();
+            renderShotList();
+            renderAngleList();
+            renderAestheticList();
+
+            generatePrompt();
+        }
+
+        // --- INIT DROPDOWNS ---
         function initDropdowns() {
             try {
                 const demoSelect = document.getElementById('demoSelect');
@@ -2211,6 +2301,7 @@
                 }
                 
                 renderLocationList();
+                renderShotList();
                 renderAngleList();
                 renderAestheticList();
 
