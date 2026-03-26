@@ -58,8 +58,8 @@
     <div id="mainContent" class="w-full max-w-7xl transition-all duration-500">
         <!-- Header -->
         <div class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2"><i class="fa-solid fa-camera-retro text-red-500 mr-2"></i> Indonesian Amateur Shot V3.6</h1>
-            <p class="text-slate-400">Logika Terpadu Kamera & Angle + Ratusan Skenario Gen-Z + Smart Lock + Optimized Core.</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2"><i class="fa-solid fa-camera-retro text-red-500 mr-2"></i> Indonesian Amateur Shot V3.8</h1>
+            <p class="text-slate-400">Logika Terpadu + Ratusan Skenario Gen-Z + Smart Lock + Pose Reference Toggle.</p>
         </div>
 
         <!-- NEW UI DASHBOARD: FILTERS & PARAMETERS -->
@@ -229,6 +229,7 @@
                         <option value="MATCH_STRICT" class="font-bold text-red-300">🔒 Sesuai Foto (Strict)</option>
                     </select>
                 </div>
+
                 <div>
                     <label class="flex justify-between items-center text-slate-400 mb-1 font-semibold text-xs transition-colors">
                         <span>AI Face Rules</span>
@@ -239,10 +240,12 @@
                         <option value="STRICT">🔒 Ketat Wajah (Strict)</option>
                     </select>
                 </div>
+                
                 <div id="strictLevelContainer" class="hidden">
-                    <label class="block text-red-400 mb-1 font-semibold text-xs"><i class="fa-solid fa-weight-hanging"></i> Bobot Strict</label>
+                    <label class="block text-red-400 mb-1 font-semibold text-xs"><i class="fa-solid fa-weight-hanging"></i> Bobot Strict Wajah</label>
                     <input type="number" id="strictWeight" min="0.1" max="1.0" step="0.1" value="1.0" oninput="triggerGenerate()" class="w-full bg-slate-900 text-slate-200 border border-red-600 rounded p-2 outline-none focus:border-red-500 transition-colors">
                 </div>
+
                 <div class="col-span-1 sm:col-span-2">
                     <label class="flex justify-between items-center text-green-400 mb-1 font-semibold text-xs transition-colors">
                         <span><i class="fa-solid fa-user-tag"></i> Artis/Tokoh Utama (Opsional)</span>
@@ -250,10 +253,10 @@
                     </label>
                     <input type="text" id="customNameGlobal" oninput="handleGlobalNameInput()" placeholder="Cth: Reza Rahadian" class="w-full bg-slate-900 text-green-300 border border-green-700 rounded p-2 outline-none focus:border-green-500 transition-colors placeholder-slate-500">
                 </div>
-                <!-- Skenario Spesifik Container -->
-                <div id="scenarioContainer" class="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-4">
+
+                <div class="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-4">
                     <label class="flex justify-between items-center text-green-400 mb-1 font-semibold text-xs transition-colors">
-                        <span><i class="fa-solid fa-clapperboard"></i> Skenario / Pose Spesifik (Custom)</span>
+                        <span><i class="fa-solid fa-clapperboard"></i> Skenario / Pose Manual (Opsional)</span>
                         <i class="fa-solid fa-lock-open cursor-pointer hover:text-white" onclick="toggleLock('customScenarioInput', this)"></i>
                     </label>
                     <input type="text" id="customScenarioInput" oninput="triggerGenerate()" placeholder="Cth: Duduk bersandar main HP" class="w-full bg-slate-900 text-green-300 border border-green-700 rounded p-2 outline-none focus:border-green-500 transition-colors placeholder-slate-500">
@@ -605,10 +608,13 @@
             const val = camInput.value;
             let html = createRadioOption('camRadio', 'RANDOM', '🎲 Acak Gaya Kamera', val, "triggerGenerate", "Otomatis menyesuaikan skenario");
 
+            html += `<div class="text-xs font-bold text-cyan-400 mt-3 mb-1 px-2 border-b border-slate-700 pb-1">🖼️ Image Reference</div>`;
+            html += createRadioOption('camRadio', 'MATCH_POSE', '🧍‍♂️ Jiplak Pose & Angle Gambar', val, "triggerGenerate", "Memaksa AI meniru pose & angle dari gambar referensi");
+
             html += `<div class="text-xs font-bold text-orange-400 mt-3 mb-1 px-2 border-b border-slate-700 pb-1">🤳 Selfie & POV</div>`;
             const selfies = [
                 {v: "SELFIE_STANDARD", l: "Selfie Standar", s: "Sejajar wajah"},
-                {v: "SELFIE_05X_TOPDOWN_POV", l: "0.5x Top-Down POV (Gen-Z)", s: "Kamera di atas kepala menatap badan & kaki (Foreshortening) - Seperti Referensi!"},
+                {v: "SELFIE_05X_TOPDOWN_POV", l: "0.5x Top-Down POV (Gen-Z)", s: "Kamera di atas kepala menatap badan & kaki (Foreshortening)"},
                 {v: "SELFIE_HIGH_ANGLE", l: "Selfie High Angle", s: "Dari atas (Estetik)"},
                 {v: "SELFIE_LOW_ANGLE", l: "Selfie Low Angle", s: "Dari bawah dagu"},
                 {v: "SELFIE_WIDE", l: "Selfie 0.5x Wide", s: "Lensa lebar, distorsi sudut"},
@@ -770,7 +776,7 @@
                 const weightRand = Math.random() * 100;
                 if(weightRand < 15) selectedStyle = "CANDID_UNAWARE";
                 else if(weightRand < 25) selectedStyle = "SELFIE_STANDARD";
-                else if(weightRand < 35) selectedStyle = "SELFIE_05X_TOPDOWN_POV"; // Berikan kesempatan random untuk gaya keren ini
+                else if(weightRand < 35) selectedStyle = "SELFIE_05X_TOPDOWN_POV"; 
                 else if(weightRand < 45) selectedStyle = "POSED_EYE_LEVEL";
                 else if(weightRand < 55) selectedStyle = "FRAMING_MEDIUM";
                 else if(weightRand < 65) selectedStyle = "PORTRAIT_CLOSE_UP";
@@ -785,8 +791,7 @@
             if(eraId === "GRUNGE_1990S") data.cameraModel = "DISPOSABLE FILM CAMERA";
 
             let hasJackpot = false;
-            // LOGIKA JAKCPOT UTAMA: "Top-Down 0.5x Foreshortening" (Sesuai Gambar Referensi)
-            // Sekarang bisa dipilih kapan saja lewat dropdown, dan akan otomatis kepilih jika skenario Zebra Cross
+            // LOGIKA JAKCPOT UTAMA: "Top-Down 0.5x Foreshortening"
             if (selectedStyle === "SELFIE_05X_TOPDOWN_POV" || (envName && (envName.includes("CROSSWALK") || envName.includes("ZEBRA CROSS")) && cameraStyle === "RANDOM")) {
                 data.type = "POV_ULTRAWIDE_SELFIE";
                 data.focal = "0.5X ULTRA WIDE LENS DISTORTION, SMARTPHONE CAMERA";
@@ -795,8 +800,6 @@
                 data.gaze = "LOOKING UP DIRECTLY INTO THE CAMERA LENS PLAYFULLY";
                 data.vibe = "TRENDY GEN-Z 0.5X ULTRAWIDE SELFIE, EXAGGERATED FORESHORTENING PERSPECTIVE";
                 hasJackpot = true;
-                
-                // Overriding selectedStyle if it hit the crosswalk jackpot so further logic doesn't mess it up
                 selectedStyle = "SELFIE_05X_TOPDOWN_POV_PROCESSED"; 
             }
 
@@ -983,20 +986,18 @@
             const disable = nameVal.length > 0;
             
             const ageSelect = document.getElementById('ageSelect');
-            const demoSelect = document.getElementById('demoSelect'); // Does not exist in main UI anymore, but keeping safe logic
             
             if(ageSelect) ageSelect.disabled = disable;
-            if(demoSelect) demoSelect.disabled = disable;
             
             const opacityClass = 'opacity-50';
-            ['ageSelect', 'demoSelect'].forEach(id => {
+            ['ageSelect'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
                     if(disable) el.classList.add(opacityClass);
                     else el.classList.remove(opacityClass);
                 }
             });
-            triggerGenerate(500); // Debounce typing
+            triggerGenerate(500); 
         }
 
         function handleAdvancedNameInput(index) {
@@ -1010,7 +1011,7 @@
             
             if(ageEl) ageEl.disabled = disable;
             if(demoEl) demoEl.disabled = disable;
-            triggerGenerate(500); // Debounce typing
+            triggerGenerate(500);
         }
 
         function toggleLock(selectId, iconEl) {
@@ -1065,13 +1066,6 @@
             } else {
                 levelContainer.classList.add('hidden');
             }
-        }
-
-        function toggleScenarioInput() {
-            // Unused in current HTML, safe to leave
-            const container = document.getElementById('scenarioContainer');
-            if (!container) return;
-            container.classList.remove('hidden');
         }
 
         function toggleAdvanced() {
@@ -1186,22 +1180,20 @@
 
         // --- MAIN GENERATOR CORE ---
         function generatePromptCore() {
-            // Optional chaining safely handles missing elements
             const numVal = document.getElementById('numSelect')?.value || "RANDOM";
             const ageVal = document.getElementById('ageSelect')?.value || "RANDOM";
             const holidayVal = document.getElementById('holidaySelect')?.value || "NONE";
             const eraVal = document.getElementById('eraSelect')?.value || "RANDOM";
             const genderVal = document.getElementById('genderSelect')?.value || "RANDOM";
-            const demoVal = document.getElementById('demoSelect')?.value || "RANDOM";
             
             const cameraStyleVal = document.getElementById('cameraSelect')?.value || "RANDOM";
             const locVal = document.getElementById('locSelect')?.value || "RANDOM";
             const timeVal = document.getElementById('timeSelect')?.value || "RANDOM";
             const weatherVal = document.getElementById('weatherSelect')?.value || "RANDOM";
             const aestheticVal = document.getElementById('aestheticSelect')?.value || "DEFAULT";
-            const strictVal = document.getElementById('strictSelect')?.value || "FLEXIBLE";
             const bodyTypeVal = document.getElementById('bodyTypeSelect')?.value || "MATCH";
             const hairAccVal = document.getElementById('hairAccSelect')?.value || "RANDOM";
+            const strictVal = document.getElementById('strictSelect')?.value || "FLEXIBLE";
 
             const customScenarioInput = document.getElementById('customScenarioInput');
             const customScenario = (customScenarioInput && !document.getElementById('scenarioContainer')?.classList.contains('hidden')) ? customScenarioInput.value.trim() : "";
@@ -1223,7 +1215,6 @@
             let setting = null;
 
             if (locVal !== "RANDOM" && !activeHoliday) {
-                // Ensure locVal is within bounds safely
                 const locIndex = parseInt(locVal);
                 if (!isNaN(locIndex) && locIndex >= 0 && locIndex < settings.length) {
                     setting = settings[locIndex];
@@ -1262,8 +1253,17 @@
             // SMART CAMERA DATA PROCESSING
             let shotData = getShotTypeData(selectedEraId, cameraStyleVal, numSubjects, genderVal, customScenario, envName);
 
+            // JIKA OPSI REFERENSI POSE DIAKTIFKAN, KITA OVERRIDE POSE & ANGLE DI SINI
+            if (cameraStyleVal === "MATCH_POSE") {
+                shotData.type = "REFERENCE_DRIVEN_POSE_SHOT";
+                shotData.pose = "EXACTLY MATCH THE SUBJECT'S POSE, POSTURE, HAND PLACEMENT, AND ACCESSORY INTERACTION AS SHOWN IN THE PROVIDED REFERENCE IMAGE. STRICTLY ENFORCE THIS.";
+                shotData.angle = "MATCH THE EXACT CAMERA ANGLE, FORESHORTENING, PERSPECTIVE, AND DISTORTION AS SHOWN IN THE PROVIDED REFERENCE IMAGE.";
+                shotData.focal = "MATCH REFERENCE LENS (LIKELY ULTRAWIDE IF TOP-DOWN POV OR SIMILAR)";
+                shotData.gaze = "MATCH THE EXACT GAZE AND EYE CONTACT FROM THE REFERENCE IMAGE";
+            }
+
             // SMART LOGIC UNTUK KONDANGAN
-            if (envName.includes("WEDDING RECEPTION") && genderVal === "COUPLE") {
+            if (envName.includes("WEDDING RECEPTION") && genderVal === "COUPLE" && cameraStyleVal !== "MATCH_POSE") {
                 shotData.type = "POSED_SCENARIO";
                 shotData.pose = "STANDING SIDE-BY-SIDE, SMILING POLITELY AT CAMERA";
                 shotData.gaze = "DIRECT EYE CONTACT WITH CAMERA";
@@ -1271,7 +1271,7 @@
             }
 
             // SMART CAR / ELEVATOR / TRAIN LOGIC
-            if (envName.includes("CAR") || envName.includes("INNOVA") || envName.includes("ALPHARD") || envName.includes("JET")) {
+            if ((envName.includes("CAR") || envName.includes("INNOVA") || envName.includes("ALPHARD") || envName.includes("JET")) && cameraStyleVal !== "MATCH_POSE") {
                 if (shotData.type === "MIRROR_SELFIE") {
                     shotData.pose = "TAKING A SELFIE REFLECTED IN THE REARVIEW MIRROR (KACA SPION)";
                     shotData.gaze = "LOOKING AT THE REARVIEW MIRROR";
@@ -1287,13 +1287,13 @@
                 }
             }
 
-            if (envName.includes("ELEVATOR")) {
+            if (envName.includes("ELEVATOR") && cameraStyleVal !== "MATCH_POSE") {
                 if (shotData.type === "MIRROR_SELFIE") {
                     shotData.pose = "STANDING HOLDING PHONE FOR A MIRROR SELFIE IN AN ELEVATOR, PULLING DOWN TINY SUNGLASSES TO LOOK OVER THEM";
                 }
             }
             
-            if (envName.includes("TRAIN") || envName.includes("TRAM")) {
+            if ((envName.includes("TRAIN") || envName.includes("TRAM")) && cameraStyleVal !== "MATCH_POSE") {
                 if (shotData.type === "POSED_SCENARIO" || shotData.type === "CANDID_INTENTIONAL") {
                     shotData.pose = "MAKING A HEART SHAPE WITH HANDS OVER A DRAWN HEART ON THE FOGGY WINDOW";
                     shotData.gaze = "SMILING SOFTLY OUT THE WINDOW";
@@ -1302,14 +1302,13 @@
 
             // SMART STREET / SKATEPARK LOGIC
             if (envName.includes("STREET") || envName.includes("SKATEPARK") || envName.includes("ROADSIDE") || envName.includes("MOUNTAIN ROAD") || envName.includes("BRIDGE") || envName.includes("ALLEYWAY")) {
-                // Jangan override pose jika user memakai POV Ultrawide
-                if (shotData.type === "POSED_SCENARIO" && !customScenario && !envName.includes("CROSSWALK") && cameraStyleVal !== "SELFIE_05X_TOPDOWN_POV") {
+                if (shotData.type === "POSED_SCENARIO" && !customScenario && !envName.includes("CROSSWALK") && cameraStyleVal !== "SELFIE_05X_TOPDOWN_POV" && cameraStyleVal !== "MATCH_POSE") {
                     shotData.pose = getRandom(["SITTING RELAXED ON THE SIDEWALK OR LEDGE", "SQUATTING CASUALLY BY THE ROAD", "LEANING AGAINST A PARKED CAR OR MOTORCYCLE", "STANDING CASUALLY WITH ONE HAND IN POCKET", "STANDING WITH ARMS CROSSED CONFIDENTLY"]);
                     shotData.vibe = "STREETSTYLE HANGOUT, OUTDOOR CHILLING";
                 }
             }
             
-            if (envName.includes("BEACH") && shotData.type !== "CANDID_UNAWARE") {
+            if (envName.includes("BEACH") && shotData.type !== "CANDID_UNAWARE" && cameraStyleVal !== "MATCH_POSE") {
                 if (envName.includes("NIGHT")) {
                     shotData.pose = "SQUATTING CASUALLY ON THE SAND WITH CITY LIGHTS IN BACKGROUND";
                 } else {
@@ -1317,8 +1316,8 @@
                 }
             }
 
-            // SMART WARTEG LOGIC (FINGER OBSTRUCTION)
-            if (envName.includes("WARTEG") && (shotData.type === "FRONT_CAMERA_SELFIE" || shotData.type === "CLOSE_UP_SELFIE")) {
+            // SMART WARTEG LOGIC
+            if (envName.includes("WARTEG") && (shotData.type === "FRONT_CAMERA_SELFIE" || shotData.type === "CLOSE_UP_SELFIE") && cameraStyleVal !== "MATCH_POSE") {
                 shotData.angle = "WIDE ANGLE DISTORTED SELFIE WITH FINGER PARTIALLY BLOCKING THE LENS EDGE";
                 shotData.pose = "FUNNY AWKWARD EXPRESSION, MISSING TEETH, TOO CLOSE TO CAMERA";
             }
@@ -1334,7 +1333,7 @@
             for(let i = 0; i < numSubjects; i++) {
                 let currentGenderVal = genderVal;
                 let currentAgeVal = ageVal;
-                let currentDemoVal = demoVal;
+                let currentDemoVal = "RANDOM"; 
                 let customName = "";
 
                 if (isAdvanced) {
@@ -1370,7 +1369,6 @@
                     }
                 } 
                 
-                // Fallback or Normal Load
                 if (tPool.length === 0) {
                     let eraData = wardrobeDB[selectedEraId] || wardrobeDB["MODERN_2020S"];
                     tPool = eraData[pGender.genderId].tops || []; bPool = eraData[pGender.genderId].bottoms || []; sPool = eraData[pGender.genderId].shoes || []; aPool = eraData[pGender.genderId].acc || []; hPool = eraData[pGender.genderId].hair || [];
@@ -1383,11 +1381,9 @@
                         bPool = bPool.filter(b => !b.includes("PAJAMA") && !b.includes("LOUNGEWEAR"));
                     }
                     
-                    // Safe Check: if filtering made it empty, reset it.
                     if (tPool.length === 0) tPool = ["PLAIN T-SHIRT"];
                     if (bPool.length === 0) bPool = ["PLAIN PANTS"];
 
-                    // Strict Accessory Filtering (Preventing Gamepads in Forests, etc)
                     if (!envName.includes("BEDROOM") && !envName.includes("KOS") && !envName.includes("COUCH") && !envName.includes("ROOM")) {
                         aPool = aPool.filter(a => !a.includes("VIDEO GAME") && !a.includes("CONTROLLER") && !a.includes("PS STICK"));
                     }
@@ -1440,15 +1436,13 @@
                             bPool = ["KAIN BATIK LILIT", "LONG SKIRT"];
                             sPool = ["HIGH HEELS", "ELEGANT FLATS"];
                             aPool.push("TAS TANGAN MEWAH");
-                            // Set hijab specifically later
                         }
                         pAppearance = "FORMAL TRADITIONAL INDONESIAN WEDDING ATTIRE";
                     }
                     
-                    // Added logics for safe pushes
                     if (envName.includes("STADIUM")) {
                         tPool.push("RED FOOTBALL CLUB JERSEY");
-                        if (pGender.genderId === "FEMALE") {
+                        if (pGender.genderId === "FEMALE" && cameraStyleVal !== "MATCH_POSE") {
                             shotData.pose = "TAKING A PICTURE OF THE SCENERY WITH A SMARTPHONE, SCREEN VISIBLE, LOOKING BACK OVER SHOULDER SMILING";
                         }
                     }
@@ -1483,7 +1477,6 @@
                     }
                 }
 
-                // If aPool is somehow empty after filters
                 if(aPool.length === 0) aPool = ["NONE"];
 
                 pWardrobe = {
@@ -1494,8 +1487,7 @@
                     acc: getRandom(aPool)
                 };
 
-                // Cermin Bedak Override safely
-                if (pWardrobe.acc && pWardrobe.acc.includes("CUSHION MIRROR") && shotData.type === "FRONT_CAMERA_SELFIE") {
+                if (pWardrobe.acc && pWardrobe.acc.includes("CUSHION MIRROR") && shotData.type === "FRONT_CAMERA_SELFIE" && cameraStyleVal !== "MATCH_POSE") {
                     shotData.pose = "CHECKING MAKEUP IN A ROUND COMPACT CUSHION MIRROR, TOUCHING LOWER LIP";
                 }
 
@@ -1509,7 +1501,7 @@
                     }
 
                     const restrictPhones = (shotData.type === "FRONT_CAMERA_SELFIE" || shotData.type === "CLOSE_UP_SELFIE" || shotData.type === "CANDID_INTENTIONAL" || shotData.type === "POSED_SCENARIO");
-                    if (restrictPhones && envName && !(envName.includes("ELEVATOR")) && !(envName.includes("STADIUM")) && !(envName.includes("BRIDGE")) && !(envName.includes("DARK ROOM")) && pWardrobe.acc && pWardrobe.acc.includes("PHONE") && cameraStyleVal !== "SELFIE_05X_TOPDOWN_POV") {
+                    if (restrictPhones && envName && !(envName.includes("ELEVATOR")) && !(envName.includes("STADIUM")) && !(envName.includes("BRIDGE")) && !(envName.includes("DARK ROOM")) && pWardrobe.acc && pWardrobe.acc.includes("PHONE") && cameraStyleVal !== "SELFIE_05X_TOPDOWN_POV" && cameraStyleVal !== "MATCH_POSE") {
                         let safeAccs = aPool.filter(a => !a.includes("PHONE"));
                         pWardrobe.acc = safeAccs.length > 0 ? getRandom(safeAccs) : "NONE";
                     }
@@ -1526,11 +1518,11 @@
                 }
 
                 let finalExpression = getRandom(beautyTypes);
-                if (pGender.genderId === "FEMALE" && !customScenario && (shotData.type === "FRONT_CAMERA_SELFIE" || shotData.type === "CLOSE_UP_SELFIE" || shotData.type === "MIRROR_SELFIE" || shotData.type === "CANDID_INTENTIONAL" || shotData.type === "POSED_SCENARIO" || shotData.type === "POV_ULTRAWIDE_SELFIE")) {
+                if (pGender.genderId === "FEMALE" && !customScenario && (shotData.type === "FRONT_CAMERA_SELFIE" || shotData.type === "CLOSE_UP_SELFIE" || shotData.type === "MIRROR_SELFIE" || shotData.type === "CANDID_INTENTIONAL" || shotData.type === "POSED_SCENARIO" || shotData.type === "POV_ULTRAWIDE_SELFIE") && cameraStyleVal !== "MATCH_POSE") {
                     if (Math.random() < 0.6) {
                         finalExpression += ", " + getRandom(["PLAYFULLY BITING LOWER LIP", "STICKING TONGUE OUT PLAYFULLY (JULUR LIDAH)", "WINKING AT CAMERA", "SEDUCTIVE GAZE", "CUTE POUTING LIPS", "LAUGHING WITH EYES SQUINTED CLOSED"]);
                     }
-                } else if (pGender.genderId === "MALE" && !customScenario && (shotData.type === "FRONT_CAMERA_SELFIE" || shotData.type === "CLOSE_UP_SELFIE" || shotData.type === "MIRROR_SELFIE" || shotData.type === "CANDID_INTENTIONAL" || shotData.type === "POV_ULTRAWIDE_SELFIE")) {
+                } else if (pGender.genderId === "MALE" && !customScenario && (shotData.type === "FRONT_CAMERA_SELFIE" || shotData.type === "CLOSE_UP_SELFIE" || shotData.type === "MIRROR_SELFIE" || shotData.type === "CANDID_INTENTIONAL" || shotData.type === "POV_ULTRAWIDE_SELFIE") && cameraStyleVal !== "MATCH_POSE") {
                     if (Math.random() < 0.3) {
                         finalExpression += ", " + getRandom(["MAKING A SILLY DUCK FACE", "SMILING WARMLY", "SERIOUS COOL EXPRESSION"]);
                     }
@@ -1582,7 +1574,6 @@
                 finalLightingQual = "HIGH CONTRAST, NOISY SHADOWS";
             }
 
-            // SMART NOISE & AMATEUR LOGIC MENDALAM BERDASARKAN WAKTU/LOKASI
             if (timeStr === "NIGHT" || (envName && (envName.includes("CLUB") || envName.includes("DARK") || envName.includes("ALLEY") || envName.includes("NIGHT")))) {
                 finalFlaws += ", HEAVY ISO SMARTPHONE NOISE, COLOR FRINGING, GRAINY SHADOWS, POOR LOW-LIGHT ARTIFACTS";
                 finalRenderEngine += ", STRUGGLING PHONE SENSOR IN LOW LIGHT";
@@ -1597,7 +1588,6 @@
                 finalFlaws += ", BLOWN OUT HIGHLIGHTS FROM HARSH SUN, SUBTLE LENS GLARE, HEAVY SUN FLARES IN LENS";
             }
 
-            // RAW VIBE OVERRIDE FOR CAR BACK SEAT (Jackpot Logic)
             if (envName && envName.includes("BACK SEAT") && (shotData.type === "CANDID_UNAWARE" || shotData.type === "ACCIDENTAL_AWKWARD_SHOT" || shotData.type === "CANDID_INTENTIONAL")) {
                 finalLightingSource = "HARSH DIRECT PHONE FLASH";
                 finalLightingQual = "UNEVEN EXPOSURE, BRIGHT HOTSPOT ON FACE AND WATCH, BLOWN HIGHLIGHTS, DEEP SHADOWS";
@@ -1607,7 +1597,7 @@
 
             let envDetails = setting ? `${setting.arch}, ${setting.props}` : "";
             if (shotData.type === "CLOSE_UP_SELFIE" || shotData.type === "PORTRAIT_CLOSE_UP") {
-                envDetails += ", HEAVILY BLURRED OUT OF FOCUS BACKGROUND, SHALLOW DEPTH OF FIELD"; // Prompt 1
+                envDetails += ", HEAVILY BLURRED OUT OF FOCUS BACKGROUND, SHALLOW DEPTH OF FIELD"; 
             }
 
             let activeAesthetic = aestheticVal;
@@ -1623,8 +1613,8 @@
                 const aesData = aestheticFilters[activeAesthetic];
                 if (aesData) {
                     finalLightingSource = aesData.lighting;
-                    finalLightingQual = `[FILTER: ${activeAesthetic}] ` + (aesData.render || finalLightingQual); // Integrated Prompt logic
-                    shotData.cameraModel = aesData.cameraType; 
+                    finalLightingQual = `[FILTER: ${activeAesthetic}] ` + (aesData.render || finalLightingQual);
+                    if (poseRefVal !== "MATCH_POSE") shotData.cameraModel = aesData.cameraType; 
                     finalCamType = `${shotData.type}, ENHANCED WITH ${activeAesthetic} VIBE`;
                     finalRenderEngine = aesData.render + ", RETAINING LOCAL INDONESIAN CONTEXT";
                     finalFlaws = aesData.render; 
@@ -1681,11 +1671,10 @@
                 }
             };
 
-            // LOGIKA NEGATIVE PROMPT YANG SANGAT MEMATIKAN KESAN PRO / STUDIO / CGI
             let baseNegativePrompt = "professional studio lighting, DSLR quality, perfect composition, symmetrical framing, overly clean, over-smooth skin, beauty filter, cinematic lighting, sharp perfect image, CGI, 3D render";
 
             if (shotData.type === "FRONT_CAMERA_SELFIE" || shotData.type === "CLOSE_UP_SELFIE" || shotData.type === "CANDID_INTENTIONAL" || shotData.type === "POSED_SCENARIO") {
-                if (envName && !(envName.includes("ELEVATOR")) && !(envName.includes("STADIUM")) && !(envName.includes("BRIDGE")) && !(envName.includes("DARK ROOM"))) {
+                if (envName && !(envName.includes("ELEVATOR")) && !(envName.includes("STADIUM")) && !(envName.includes("BRIDGE")) && !(envName.includes("DARK ROOM")) && cameraStyleVal !== "MATCH_POSE") {
                     imagePromptData.CAMERA["RESTRICTIONS"] = "STRICTLY DO NOT SHOW THE PHONE OR CAMERA IN THE FRAME.";
                     imagePromptData["NEGATIVE_PROMPT"] = `showing phone, holding camera, mobile phone in frame, mirror reflection, ${baseNegativePrompt}`;
                 } else {
@@ -1698,7 +1687,7 @@
                 imagePromptData["NEGATIVE_PROMPT"] = baseNegativePrompt;
             }
 
-            if (hairAccVal === "MATCH_STRICT") {
+            if (hairAccVal === "MATCH_STRICT" || strictVal === "STRICT") {
                 imagePromptData["NEGATIVE_PROMPT"] += ", double glasses, extra glasses on head, changing hair style, different accessories, adding hats";
             }
             
@@ -1706,13 +1695,16 @@
                 imagePromptData["NEGATIVE_PROMPT"] += ", fake watch, oversized watch, generic car interior, wrong dashboard, staged pose";
             }
 
-            // Exception: For Top-Down POV, hands and camera should NOT be negative prompted
-            if (shotData.type === "POV_ULTRAWIDE_SELFIE") {
+            // Jika mode referensi pose nyala
+            if (cameraStyleVal === "MATCH_POSE") {
+                imagePromptData["IMAGE_REFERENCE_INSTRUCTION"] = "ControlNet Pose / Depth enforcement: The AI MUST strictly replicate the exact anatomical posture, camera angle, perspective, and item placements (like holding glasses or phone) as seen in the reference image the user provides. The identity, environment, and clothing should adapt to the text prompt.";
+                imagePromptData.CAMERA["RESTRICTIONS"] = "IF ARMS/HANDS/CAMERA ARE VISIBLE IN THE REFERENCE, REPLICATE THEM EXACTLY.";
+                imagePromptData["NEGATIVE_PROMPT"] = baseNegativePrompt + ", flat angle, eye-level, mirror reflection";
+            } else if (shotData.type === "POV_ULTRAWIDE_SELFIE") {
                 imagePromptData.CAMERA["RESTRICTIONS"] = "ARMS AND HANDS MUST BE VISIBLE HOLDING THE INVISIBLE CAMERA IN FRONT OF THE SUBJECT.";
                 imagePromptData["NEGATIVE_PROMPT"] = baseNegativePrompt + ", flat angle, eye-level, mirror reflection";
             }
 
-            // USER PERSONALIZATION INCORPORATED HERE
             if (strictVal === "STRICT") {
                 const strictWeightEl = document.getElementById('strictWeight');
                 const strictWeightVal = strictWeightEl ? strictWeightEl.value : "1.0";
@@ -1722,14 +1714,17 @@
                 imagePromptData["AI_ENFORCEMENT"] = {
                     "STRICT_MODE": "ENABLED",
                     "REFERENCE_IMAGE_STRENGTH": parseFloat(strictWeightVal),
-                    "INSTRUCTION": "Enable strict facial consistency mode. Prioritize the facial features from the provided reference image for all subsequent generations. Maintain the subject's identity accurately while only adapting the pose, lighting, and background. Do not alter the core facial structure.", // Exact phrasing matched to user request
+                    "INSTRUCTION": "Enable strict facial consistency mode. Prioritize the facial features from the provided reference image for all subsequent generations. Maintain the subject's identity accurately while only adapting the pose, lighting, and background. Do not alter the core facial structure.",
                     "NEGATIVE_PROMPT": currentNeg + ", deformed, deviations from prompt, generic faces, morphed bodies, fused people, changing facial features, different person, professional studio lighting"
                 };
             }
 
+            const photoOut = document.getElementById('jsonOutputPhoto');
+            if (photoOut) photoOut.textContent = JSON.stringify(imagePromptData, null, 2);
+
             let videoSceneDynamics = [];
-            if (shotData.type === "POV_ULTRAWIDE_SELFIE") {
-                videoSceneDynamics = ["SUBJECT HOLDING THE CAMERA WHILE SWINGING LEGS PLAYFULLY", "SUBJECT LOOKING UP AT THE CAMERA AND SMILING WIDELY"];
+            if (shotData.type === "POV_ULTRAWIDE_SELFIE" || cameraStyleVal === "MATCH_POSE") {
+                videoSceneDynamics = ["SUBJECT MAINTAINING THE EXACT REFERENCE POSE BUT ADDING SUBTLE LIFE-LIKE MOVEMENTS (E.G., BLINKING, BREATHING, HAIR BLOWING IN THE WIND)", "SUBJECT HOLDING THE EXACT POSE WHILE LOOKING UP AT THE CAMERA AND SMILING WIDELY"];
             } else if (shotData.type === "POSED_SCENARIO" && customScenario) {
                 videoSceneDynamics = [customScenario.toUpperCase()];
             } else if (numSubjects === 1) {
@@ -1757,10 +1752,6 @@
                 videoPromptData["TEXT_PROMPT_FOR_AI_VIDEO"] += " STRICT RULE: Do not mutate subject features or fuse people together.";
             }
 
-            // Output to UI
-            const photoOut = document.getElementById('jsonOutputPhoto');
-            if (photoOut) photoOut.textContent = JSON.stringify(imagePromptData, null, 2);
-            
             const videoOut = document.getElementById('jsonOutputVideo');
             if (videoOut) videoOut.textContent = JSON.stringify(videoPromptData, null, 2);
             
@@ -1774,7 +1765,6 @@
             resetBtn('copyBtnPhoto');
             resetBtn('copyBtnVideo');
 
-            // Button Feedback Animation
             const genBtn = document.getElementById('generateBtn');
             if(genBtn && generateTimeout) {
                 const originalHTML = '<i class="fa-solid fa-wand-magic-sparkles text-2xl"></i> GENERATE PROMPT';
@@ -1791,7 +1781,7 @@
         }
 
         function resetAndGenerate() {
-            const dropdownIds = ['numSelect', 'ageSelect', 'holidaySelect', 'eraSelect', 'locSelect', 'cameraSelect', 'genderSelect', 'timeSelect', 'weatherSelect', 'aestheticSelect', 'strictSelect', 'bodyTypeSelect', 'hairAccSelect'];
+            const dropdownIds = ['numSelect', 'ageSelect', 'holidaySelect', 'eraSelect', 'locSelect', 'cameraSelect', 'genderSelect', 'timeSelect', 'weatherSelect', 'aestheticSelect', 'bodyTypeSelect', 'hairAccSelect', 'strictSelect'];
             
             dropdownIds.forEach(id => {
                 const el = document.getElementById(id);
@@ -1799,6 +1789,7 @@
                     if (id === 'holidaySelect') el.value = "RANDOM_HOLIDAY";
                     else if (id === 'aestheticSelect') el.value = "DEFAULT";
                     else if (id === 'strictSelect') el.value = "FLEXIBLE";
+                    else if (id === 'poseRefSelect') el.value = "NONE";
                     else if (id === 'bodyTypeSelect') el.value = "MATCH";
                     else el.value = "RANDOM";
                 }
@@ -1813,6 +1804,8 @@
             if (customScenarioInput && customScenarioInput.dataset.locked !== "true") {
                 customScenarioInput.value = "";
             }
+            
+            toggleStrictLevel();
             
             const eraSelect = document.getElementById('eraSelect');
             if (eraSelect && eraSelect.dataset.locked !== "true") {
@@ -1857,7 +1850,6 @@
         // --- INIT DROPDOWNS ---
         function initDropdowns() {
             try {
-                // Initialize custom list delegation
                 setupDelegation('locListContainer', 'locSelect');
                 setupDelegation('cameraListContainer', 'cameraSelect');
                 setupDelegation('aesListContainer', 'aestheticSelect');
