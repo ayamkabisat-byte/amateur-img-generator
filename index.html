@@ -58,7 +58,7 @@
     <div id="mainContent" class="w-full max-w-7xl transition-all duration-500">
         <!-- Header -->
         <div class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2"><i class="fa-solid fa-camera-retro text-red-500 mr-2"></i> Indonesian Amateur Shot V3.5</h1>
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2"><i class="fa-solid fa-camera-retro text-red-500 mr-2"></i> Indonesian Amateur Shot V3.6</h1>
             <p class="text-slate-400">Logika Terpadu Kamera & Angle + Ratusan Skenario Gen-Z + Smart Lock + Optimized Core.</p>
         </div>
 
@@ -256,7 +256,7 @@
                         <span><i class="fa-solid fa-clapperboard"></i> Skenario / Pose Spesifik (Custom)</span>
                         <i class="fa-solid fa-lock-open cursor-pointer hover:text-white" onclick="toggleLock('customScenarioInput', this)"></i>
                     </label>
-                    <input type="text" id="customScenarioInput" oninput="triggerGenerate()" placeholder="Cth: Selfie santai ngopi di Warkop" class="w-full bg-slate-900 text-green-300 border border-green-700 rounded p-2 outline-none focus:border-green-500 transition-colors placeholder-slate-500">
+                    <input type="text" id="customScenarioInput" oninput="triggerGenerate()" placeholder="Cth: Duduk bersandar main HP" class="w-full bg-slate-900 text-green-300 border border-green-700 rounded p-2 outline-none focus:border-green-500 transition-colors placeholder-slate-500">
                 </div>
             </div>
         </div>
@@ -343,7 +343,7 @@
             { id: "Y2K_2000S", weight: 10 }, { id: "GRUNGE_1990S", weight: 10 }
         ];
 
-        // --- HIGGSFIELD & NEW AESTHETIC STYLES (Based on 5 Prompts) ---
+        // --- HIGGSFIELD & NEW AESTHETIC STYLES ---
         const aestheticFilters = {
             "SOFT_PORTRAIT": { lighting: "SOFT DIFFUSED LIGHTING, GENTLE HIGHLIGHTS", render: "SOFT WARM COLOR CAST, NATURAL SKIN TONES, CANDID AND PERSONAL VIBE, LUMINIOUS QUALITY", cameraType: "MEDIUM CLOSE-UP PORTRAIT LENS" },
             "VIBRANT_CASUAL": { lighting: "BRIGHT NATURAL OVERCAST DAYLIGHT, SOFT SHADOWS", render: "CASUAL VIBRANT AESTHETIC, BRIGHT COLORS CONTRASTING, REALISTIC DIGITAL PHOTOGRAPHY", cameraType: "STANDARD LENS WITH SHALLOW DEPTH OF FIELD" },
@@ -408,7 +408,7 @@
         };
 
         const settings = [
-            // TIMELESS BASIC & NEW SCENARIOS (Integrated from Prompts)
+            // TIMELESS BASIC & NEW SCENARIOS
             { env: "PLAIN NEUTRAL COLOR WALL", arch: "MINIMALIST BLANK WALL WITH NO DISTRACTIONS", props: "NONE, PURE FOCUS ON SUBJECT", era_id: "TIMELESS_BASIC" },
             { env: "BLURRED INDOOR BACKGROUND", arch: "INDISTINGUISHABLE INDOOR ROOM", props: "SOFT BOKEH", era_id: "TIMELESS_BASIC" },
             { env: "SIMPLE ROOM CORNER", arch: "PLAIN CORNER WITH SOFT LIGHTING", props: "MINIMAL DISTRACTIONS", era_id: "TIMELESS_BASIC" },
@@ -480,8 +480,8 @@
                     hair: ["MESSY CLAW CLIP UPDO", "CURTAIN BANGS WITH HIGHLIGHTS", "SLEEK STRAIGHT BLACK HAIR", "HIJAB PASHMINA CASUAL", "WOLF CUT"], 
                     tops: ["BABY TEE CROP TOP", "OVERSIZED T-SHIRT AS DRESS", "SLEEVELESS KNIT TOP", "BLACK SWEATSHIRT", "CROPPED CARDIGAN"], 
                     bottoms: ["PARACHUTE PANTS", "BAGGY MOM JEANS", "FLARE LEGGINGS", "DENIM CUTOFF SHORTS"], 
-                    shoes: ["NEW BALANCE SNEAKERS", "PLATFORM SANDALS", "DOC MARTENS", "YELLOW SNEAKERS"], 
-                    acc: ["BEADED PHONE CHARM", "TINY SHOULDER BAG", "SUNGLASSES ON HEAD", "CHUNKY RINGS"] 
+                    shoes: ["NEW BALANCE SNEAKERS", "PLATFORM SANDALS", "DOC MARTENS", "YELLOW SNEAKERS", "RED ADIDAS SAMBA"], 
+                    acc: ["BEADED PHONE CHARM", "TINY SHOULDER BAG", "SUNGLASSES ON HEAD", "CHUNKY RINGS", "WIRED EARPHONES"] 
                 }
             },
             "HIPSTER_2010S": {
@@ -505,7 +505,7 @@
             { source: "HARSH TROPICAL AFTERNOON SUNLIGHT", dir: "DIRECTIONAL", qual: "HIGH CONTRAST, DEEP SHADOWS, SWEATY VIBE" },
             { source: "GOLDEN HOUR SUNSET SUNLIGHT", dir: "BACKLIT", qual: "WARM, GLOWING, LENS FLARE" },
             { source: "WARM RESTROOM VANITY LIGHTING", dir: "FRONT-FACING DIFFUSED", qual: "FLATTERING, YELLOWISH GLOW, EVEN SHADOWS" },
-            { source: "SOFT DIFFUSED NATURAL LIGHTING", dir: "FRONT AND SIDE", qual: "GENTLE HIGHLIGHTS, EVEN ILLUMINATION" } // Added from Prompt 1
+            { source: "SOFT DIFFUSED NATURAL LIGHTING", dir: "FRONT AND SIDE", qual: "GENTLE HIGHLIGHTS, EVEN ILLUMINATION" }
         ];
 
         // --- OPTIMIZATION DEBOUNCE FUNCTION ---
@@ -546,11 +546,9 @@
             
             container.addEventListener('change', function(e) {
                 if (e.target && e.target.classList.contains('radio-input')) {
-                    // Update hidden input
                     const val = e.target.value;
                     document.getElementById(inputId).value = val;
                     
-                    // Update Styling
                     container.querySelectorAll('.radio-label').forEach(lbl => {
                         lbl.classList.remove('bg-slate-700', 'border-slate-500', 'shadow-inner');
                         lbl.classList.add('border-transparent', 'hover:border-slate-600', 'hover:bg-slate-700/50');
@@ -561,7 +559,6 @@
                         parentLabel.classList.remove('border-transparent', 'hover:border-slate-600', 'hover:bg-slate-700/50');
                     }
 
-                    // Execute callback (e.g. trigger generation)
                     const onchangeStr = e.target.getAttribute('data-onchange');
                     if (onchangeStr === "triggerGenerate") {
                         triggerGenerate();
@@ -591,7 +588,6 @@
 
             if (!validLocationFound) {
                 locInput.value = 'RANDOM';
-                // Only re-render if we actually changed the value to prevent loops
                 html = html.replace(/checked/g, ''); 
                 html = html.replace(/value="RANDOM"/, 'value="RANDOM" checked');
             }
@@ -599,7 +595,7 @@
             container.innerHTML = html;
         }
 
-        // UNIFIED CAMERA & ANGLE LIST
+        // FULLY RESTORED & ENHANCED CAMERA LIST
         function renderCameraList() {
             const container = document.getElementById('cameraListContainer');
             const camInput = document.getElementById('cameraSelect');
@@ -607,46 +603,59 @@
             if(camInput.dataset.locked === "true") return;
 
             const val = camInput.value;
-            let html = createRadioOption('camRadio', 'RANDOM', '🎲 Acak Gaya Kamera', val, "triggerGenerate", "Otomatis menyesuaikan skenario & lingkungan");
+            let html = createRadioOption('camRadio', 'RANDOM', '🎲 Acak Gaya Kamera', val, "triggerGenerate", "Otomatis menyesuaikan skenario");
 
-            html += `<div class="text-xs font-bold text-orange-400 mt-3 mb-1 px-2 border-b border-slate-700 pb-1">🤳 Selfie & Wefie</div>`;
+            html += `<div class="text-xs font-bold text-orange-400 mt-3 mb-1 px-2 border-b border-slate-700 pb-1">🤳 Selfie & POV</div>`;
             const selfies = [
-                {v: "SELFIE_STANDARD", l: "Selfie Standar", s: "Sejajar mata (Eye Level)"},
-                {v: "SELFIE_HIGH_ANGLE", l: "Selfie Top-Down", s: "High angle estetik dari atas"},
-                {v: "SELFIE_LOW_ANGLE", l: "Selfie Low Angle", s: "Dari bawah dagu (Chin POV)"},
-                {v: "SELFIE_WIDE", l: "Selfie 0.5x Ultra Wide", s: "Lensa lebar dengan distorsi"},
-                {v: "SELFIE_CLOSEUP", l: "Close-Up Selfie", s: "Sangat dekat ke wajah"}
+                {v: "SELFIE_STANDARD", l: "Selfie Standar", s: "Sejajar wajah"},
+                {v: "SELFIE_05X_TOPDOWN_POV", l: "0.5x Top-Down POV (Gen-Z)", s: "Kamera di atas kepala menatap badan & kaki (Foreshortening) - Seperti Referensi!"},
+                {v: "SELFIE_HIGH_ANGLE", l: "Selfie High Angle", s: "Dari atas (Estetik)"},
+                {v: "SELFIE_LOW_ANGLE", l: "Selfie Low Angle", s: "Dari bawah dagu"},
+                {v: "SELFIE_WIDE", l: "Selfie 0.5x Wide", s: "Lensa lebar, distorsi sudut"},
+                {v: "SELFIE_CLOSEUP", l: "Selfie Close-Up", s: "Sangat dekat ke wajah"},
+                {v: "ANGLE_POV", l: "First-Person POV", s: "Sudut pandang mata subjek"}
             ];
             selfies.forEach(a => { html += createRadioOption('camRadio', a.v, a.l, val, "triggerGenerate", a.s); });
 
             html += `<div class="text-xs font-bold text-orange-400 mt-3 mb-1 px-2 border-b border-slate-700 pb-1">🪞 Mirror Selfie</div>`;
             const mirrors = [
-                {v: "MIRROR_STANDARD", l: "Mirror Selfie Standar", s: "Menghadap cermin lurus"},
-                {v: "MIRROR_WIDE", l: "Mirror Selfie Wide", s: "Lensa 0.5x Ultra Wide di kaca"},
+                {v: "MIRROR_STANDARD", l: "Mirror Selfie", s: "Foto lurus di depan cermin"},
+                {v: "MIRROR_WIDE", l: "Mirror Wide", s: "Lensa 0.5x Ultra Wide di kaca"},
                 {v: "MIRROR_FACELESS", l: "Faceless Mirror", s: "HP sepenuhnya menutupi wajah"}
             ];
             mirrors.forEach(a => { html += createRadioOption('camRadio', a.v, a.l, val, "triggerGenerate", a.s); });
 
-            html += `<div class="text-xs font-bold text-orange-400 mt-3 mb-1 px-2 border-b border-slate-700 pb-1">🫣 Candid & Dokumentasi</div>`;
+            html += `<div class="text-xs font-bold text-orange-400 mt-3 mb-1 px-2 border-b border-slate-700 pb-1">📐 Ukuran Shot (Framing)</div>`;
+            const framings = [
+                {v: "PORTRAIT_CLOSE_UP", l: "Portrait Close-Up", s: "Fokus wajah hingga dada (Bahu/Dada ke atas)"},
+                {v: "FRAMING_MEDIUM", l: "Medium Shot (MS)", s: "Pinggang / Pinggul ke atas"},
+                {v: "FRAMING_LONG", l: "Long Shot (LS)", s: "Full Body (Seluruh tubuh terlihat)"},
+                {v: "FRAMING_WIDE", l: "Extreme Long Shot (ELS)", s: "Subjek kecil, fokus pada background luas"}
+            ];
+            framings.forEach(a => { html += createRadioOption('camRadio', a.v, a.l, val, "triggerGenerate", a.s); });
+
+            html += `<div class="text-xs font-bold text-orange-400 mt-3 mb-1 px-2 border-b border-slate-700 pb-1">🎯 Sudut Angle Kamera (Posed)</div>`;
+            const angles = [
+                {v: "POSED_EYE_LEVEL", l: "Eye Level", s: "Kamera sejajar rata dengan mata subjek"},
+                {v: "POSED_HIGH_ANGLE", l: "High Angle", s: "Kamera di atas menatap ke bawah"},
+                {v: "POSED_LOW_ANGLE", l: "Low Angle", s: "Kamera di bawah menatap ke atas"},
+                {v: "ANGLE_BIRD_EYE", l: "Bird's Eye View", s: "Tegak lurus 90° tepat dari atas kepala (Top-Down)"},
+                {v: "ANGLE_FROG_EYE", l: "Frog/Worm's Eye", s: "Kamera diletakkan menyentuh tanah/lantai"},
+                {v: "ANGLE_DUTCH", l: "Dutch Angle / Canted", s: "Kamera dimiringkan secara sengaja (Edgy)"}
+            ];
+            angles.forEach(a => { html += createRadioOption('camRadio', a.v, a.l, val, "triggerGenerate", a.s); });
+
+            html += `<div class="text-xs font-bold text-orange-400 mt-3 mb-1 px-2 border-b border-slate-700 pb-1">🫣 Candid & Lainnya</div>`;
             const candids = [
-                {v: "CANDID_INTENTIONAL", l: "Candid Pura-Pura", s: "Sadar kamera, aesthetic vibe"},
-                {v: "CANDID_UNAWARE", l: "Candid Asli", s: "Tidak sadar kamera sama sekali"},
-                {v: "CANDID_TELEPHOTO", l: "Candid Jarak Jauh", s: "Telephoto zoom / Paparazzi style"},
+                {v: "CANDID_UNAWARE", l: "Candid Asli", s: "Aktivitas natural, tidak lihat kamera"},
+                {v: "CANDID_INTENTIONAL", l: "Candid Pura-Pura", s: "Sadar kamera, aesthetic vibe berpaling"},
+                {v: "CANDID_OTS", l: "Over the Shoulder (OTS)", s: "Diambil dari belakang bahu seseorang"},
+                {v: "CANDID_TELEPHOTO", l: "Telephoto Shot", s: "Paparazzi zoom jarak jauh dengan blur"},
                 {v: "ACCIDENTAL", l: "Accidental Blur", s: "Tidak sengaja terjepret, shaky/blur"}
             ];
             candids.forEach(a => { html += createRadioOption('camRadio', a.v, a.l, val, "triggerGenerate", a.s); });
 
-            html += `<div class="text-xs font-bold text-orange-400 mt-3 mb-1 px-2 border-b border-slate-700 pb-1">📸 Berpose / Terkonsep</div>`;
-            const posed = [
-                {v: "POSED_EYE_LEVEL", l: "Berpose Standar", s: "Eye-Level (Lurus normal)"},
-                {v: "PORTRAIT_CLOSE_UP", l: "Portrait Close-Up", s: "Medium close-up (Chest up) blur background"}, // Added from Prompt 1
-                {v: "POSED_HIGH_ANGLE", l: "Berpose Top-Down", s: "High Angle (Menatap ke atas, overhead)"}, // Enhanced for Prompt 5
-                {v: "POSED_LOW_ANGLE", l: "Berpose Frog Eye", s: "Kamera dari bawah tanah"},
-                {v: "POSED_WIDE", l: "Berpose Lensa Lebar", s: "Wide Angle (Banyak background)"}
-            ];
-            posed.forEach(a => { html += createRadioOption('camRadio', a.v, a.l, val, "triggerGenerate", a.s); });
-
-            html += `<div class="text-xs font-bold text-orange-400 mt-3 mb-1 px-2 border-b border-slate-700 pb-1">📹 Sudut Ekstrem (Unik)</div>`;
+            html += `<div class="text-xs font-bold text-orange-400 mt-3 mb-1 px-2 border-b border-slate-700 pb-1">📹 Sudut Ekstrem</div>`;
             const extremes = [
                 {v: "EXTREME_CCTV", l: "Kamera CCTV", s: "Sudut tinggi pojok ruangan"},
                 {v: "EXTREME_FISHEYE", l: "Action Cam Fisheye", s: "Lensa 8mm sangat cembung"}
@@ -675,7 +684,6 @@
             container.innerHTML = html;
         }
 
-        // Safe getRandom function to avoid undefined errors when arrays are filtered to empty
         function getRandom(arr) { 
             if (!arr || arr.length === 0) return "STANDARD"; 
             return arr[Math.floor(Math.random() * arr.length)]; 
@@ -745,10 +753,11 @@
         // --- GET SHOT TYPE DATA ---
         function getShotTypeData(eraId, cameraStyle, numSubjects, genderVal, customScenario, envName) {
             let styles = [
-                "SELFIE_STANDARD", "SELFIE_HIGH_ANGLE", "SELFIE_LOW_ANGLE", "SELFIE_WIDE", "SELFIE_CLOSEUP",
+                "SELFIE_STANDARD", "SELFIE_05X_TOPDOWN_POV", "SELFIE_HIGH_ANGLE", "SELFIE_LOW_ANGLE", "SELFIE_WIDE", "SELFIE_CLOSEUP", "ANGLE_POV", 
                 "MIRROR_STANDARD", "MIRROR_WIDE", "MIRROR_FACELESS",
-                "CANDID_INTENTIONAL", "CANDID_UNAWARE", "CANDID_TELEPHOTO", "ACCIDENTAL",
-                "POSED_EYE_LEVEL", "PORTRAIT_CLOSE_UP", "POSED_HIGH_ANGLE", "POSED_LOW_ANGLE", "POSED_WIDE",
+                "PORTRAIT_CLOSE_UP", "FRAMING_MEDIUM", "FRAMING_LONG", "FRAMING_WIDE",
+                "POSED_EYE_LEVEL", "POSED_HIGH_ANGLE", "POSED_LOW_ANGLE", "ANGLE_BIRD_EYE", "ANGLE_FROG_EYE", "ANGLE_DUTCH",
+                "CANDID_UNAWARE", "CANDID_INTENTIONAL", "CANDID_OTS", "CANDID_TELEPHOTO", "ACCIDENTAL",
                 "EXTREME_CCTV", "EXTREME_FISHEYE"
             ];
             
@@ -759,14 +768,15 @@
             let selectedStyle = cameraStyle;
             if (selectedStyle === "RANDOM") {
                 const weightRand = Math.random() * 100;
-                if(weightRand < 25) selectedStyle = "CANDID_UNAWARE";
-                else if(weightRand < 40) selectedStyle = "SELFIE_STANDARD";
-                else if(weightRand < 55) selectedStyle = "POSED_EYE_LEVEL";
-                else if(weightRand < 65 && isMirrorFriendly(envName)) selectedStyle = "MIRROR_STANDARD";
-                else if(weightRand < 75) selectedStyle = "PORTRAIT_CLOSE_UP";
+                if(weightRand < 15) selectedStyle = "CANDID_UNAWARE";
+                else if(weightRand < 25) selectedStyle = "SELFIE_STANDARD";
+                else if(weightRand < 35) selectedStyle = "SELFIE_05X_TOPDOWN_POV"; // Berikan kesempatan random untuk gaya keren ini
+                else if(weightRand < 45) selectedStyle = "POSED_EYE_LEVEL";
+                else if(weightRand < 55) selectedStyle = "FRAMING_MEDIUM";
+                else if(weightRand < 65) selectedStyle = "PORTRAIT_CLOSE_UP";
                 else selectedStyle = getRandom(styles);
             } else if (selectedStyle.includes("MIRROR") && !isMirrorFriendly(envName)) {
-                selectedStyle = "FRONT_CAMERA_SELFIE";
+                selectedStyle = "SELFIE_STANDARD";
             }
 
             let data = { type: "", cameraModel: "SMARTPHONE CAMERA", focal: "STANDARD PHONE LENS (24MM EQUIV)", angle: "EYE-LEVEL", pose: "", gaze: "", vibe: "" };
@@ -775,144 +785,191 @@
             if(eraId === "GRUNGE_1990S") data.cameraModel = "DISPOSABLE FILM CAMERA";
 
             let hasJackpot = false;
-            // Crosswalk Jackpot (Prompt 5 logic incorporated)
-            if (envName && (envName.includes("CROSSWALK") || envName.includes("ZEBRA CROSS")) && !selectedStyle.includes("MIRROR") && !selectedStyle.includes("TELEPHOTO")) {
-                data.type = "POSED_SCENARIO";
-                data.pose = "SITTING DIAGONALLY ACROSS THE FRAME ON THE CROSSWALK, LEGS EXTENDED TOWARDS THE TOP OF THE FRAME AND HEAD TOWARDS THE BOTTOM, HANDS UP ADJUSTING SUNGLASSES";
-                data.angle = "OVERHEAD SHOT, LOOKING DOWN AT THE SUBJECT FROM ABOVE";
-                data.gaze = "LOOKING UP AT THE CAMERA PLAYFULLY WITH A CASUAL INTERACTION";
-                data.vibe = "INTIMATE AND PERSONAL COMPOSITION, SHALLOW DEPTH OF FIELD WITH SUBJECT IN SHARP FOCUS AND BACKGROUND SLIGHTLY BLURRED";
+            // LOGIKA JAKCPOT UTAMA: "Top-Down 0.5x Foreshortening" (Sesuai Gambar Referensi)
+            // Sekarang bisa dipilih kapan saja lewat dropdown, dan akan otomatis kepilih jika skenario Zebra Cross
+            if (selectedStyle === "SELFIE_05X_TOPDOWN_POV" || (envName && (envName.includes("CROSSWALK") || envName.includes("ZEBRA CROSS")) && cameraStyle === "RANDOM")) {
+                data.type = "POV_ULTRAWIDE_SELFIE";
+                data.focal = "0.5X ULTRA WIDE LENS DISTORTION, SMARTPHONE CAMERA";
+                data.angle = "FIRST-PERSON POV SELFIE LOOKING DOWN AT OWN BODY, EXTREME HIGH-ANGLE";
+                data.pose = "SITTING OR STANDING CASUALLY, LEGS EXTENDING FORWARD AND DOWNWARD INTO THE BACKGROUND. BOTH ARMS ARE VISIBLE REACHING UP HOLDING THE CAMERA, CREATING A STRONG FORESHORTENING EFFECT. OVERSIZED SHOES PERSPECTIVE";
+                data.gaze = "LOOKING UP DIRECTLY INTO THE CAMERA LENS PLAYFULLY";
+                data.vibe = "TRENDY GEN-Z 0.5X ULTRAWIDE SELFIE, EXAGGERATED FORESHORTENING PERSPECTIVE";
                 hasJackpot = true;
+                
+                // Overriding selectedStyle if it hit the crosswalk jackpot so further logic doesn't mess it up
+                selectedStyle = "SELFIE_05X_TOPDOWN_POV_PROCESSED"; 
             }
 
-            if (!hasJackpot) {
-                if (selectedStyle.includes("SELFIE")) {
-                    data.type = "FRONT_CAMERA_SELFIE";
-                    data.vibe = "CASUAL FIRST-PERSON FRONT CAMERA SELFIE";
-                    data.focal = "FRONT-FACING SELFIE LENS OR 0.5X ULTRA WIDE";
-                    
-                    if (selectedStyle === "SELFIE_STANDARD") {
-                        data.angle = "EYE-LEVEL STRAIGHT ON SELFIE";
-                        data.pose = getRandom(["MAKING A PEACE SIGN CLOSE TO FACE", "DUCK FACE OR POUTING PLAYFULLY", "SMILING WARMLY INTO THE LENS"]);
-                    } else if (selectedStyle === "SELFIE_HIGH_ANGLE") {
-                        data.angle = "HIGH-ANGLE POV LOOKING DOWN AT SUBJECT (TOP-DOWN SELFIE)";
-                        data.pose = "HOLDING THE CAMERA HIGH ABOVE, LOOKING UP PLAYFULLY";
-                        if (numSubjects === 1) data.pose += ", SITTING OR SQUATTING ON THE GROUND";
-                    } else if (selectedStyle === "SELFIE_LOW_ANGLE") {
-                        data.angle = "LOW-ANGLE CHIN POV, LOOKING UP SLIGHTLY AT THE LENS";
-                        data.pose = "LOOKING DOWN AT THE CAMERA WITH A SERIOUS OR COOL EXPRESSION";
-                    } else if (selectedStyle === "SELFIE_WIDE") {
-                        data.angle = "WIDE ANGLE DISTORTED SELFIE, ARMS EXTENDED";
-                        data.focal = "0.5X ULTRA WIDE LENS DISTORTION";
-                        data.pose = "SQUEEZING INTO THE FRAME, PLAYFUL EXAGGERATED PERSPECTIVE";
-                    } else if (selectedStyle === "SELFIE_CLOSEUP") {
-                        data.type = "CLOSE_UP_SELFIE";
-                        data.angle = "EXTREME CLOSE-UP PORTRAIT";
-                        data.focal = "SMARTPHONE PORTRAIT LENS / MACRO";
-                        data.pose = "FACE TAKING UP MOST OF THE FRAME, SHOWING SKIN TEXTURE DETAILS";
-                    }
-                    data.gaze = "DIRECT EYE CONTACT WITH THE LENS";
-                } 
-                else if (selectedStyle.includes("MIRROR")) {
-                    data.type = "MIRROR_SELFIE";
-                    data.vibe = "CLASSIC AESTHETIC MIRROR SELFIE";
-                    data.angle = "STRAIGHT-ON MIRROR REFLECTION";
-                    
-                    if (selectedStyle === "MIRROR_STANDARD") {
-                        data.pose = "HOLDING PHONE/CAMERA SHOWING OUTFIT IN THE MIRROR";
-                    } else if (selectedStyle === "MIRROR_WIDE") {
-                        data.pose = "TAKING A MIRROR SELFIE CAPTURING THE ENTIRE ROOM BACKGROUND";
-                        data.focal = "0.5X ULTRA WIDE LENS";
-                    } else if (selectedStyle === "MIRROR_FACELESS") {
-                        data.pose = "HOLDING PHONE COMPLETELY COVERING THE FACE (SHY FACELESS AESTHETIC)";
-                    }
-                    data.gaze = "LOOKING AT THE PHONE/CAMERA SCREEN REFLECTED IN THE MIRROR";
+            // KELOMPOK 1: SELFIE & POV
+            if (selectedStyle.includes("SELFIE") || selectedStyle === "ANGLE_POV") {
+                data.type = "FRONT_CAMERA_SELFIE";
+                data.vibe = "CASUAL FIRST-PERSON FRONT CAMERA SHOT";
+                
+                if (selectedStyle === "SELFIE_STANDARD") {
+                    data.angle = "EYE-LEVEL STRAIGHT ON SELFIE";
+                    data.focal = "FRONT-FACING SELFIE LENS";
+                    data.pose = getRandom(["MAKING A PEACE SIGN CLOSE TO FACE", "SMILING WARMLY INTO THE LENS", "DUCK FACE OR POUTING PLAYFULLY"]);
+                } else if (selectedStyle === "SELFIE_HIGH_ANGLE") {
+                    data.angle = "HIGH-ANGLE POV LOOKING DOWN AT SUBJECT (TOP-DOWN SELFIE)";
+                    data.focal = "FRONT-FACING SELFIE LENS";
+                    data.pose = "HOLDING THE CAMERA HIGH ABOVE, LOOKING UP PLAYFULLY";
+                } else if (selectedStyle === "SELFIE_LOW_ANGLE") {
+                    data.angle = "LOW-ANGLE CHIN POV, LOOKING UP SLIGHTLY AT THE LENS";
+                    data.pose = "LOOKING DOWN AT THE CAMERA WITH A SERIOUS OR COOL EXPRESSION";
+                } else if (selectedStyle === "SELFIE_WIDE") {
+                    data.angle = "HIGH-ANGLE WIDE SELFIE, ARMS EXTENDED";
+                    data.focal = "0.5X ULTRA WIDE LENS DISTORTION";
+                    data.pose = "HOLDING CAMERA HIGH, SQUEEZING INTO THE FRAME WITH PLAYFUL EXAGGERATED PERSPECTIVE";
+                } else if (selectedStyle === "SELFIE_CLOSEUP") {
+                    data.type = "CLOSE_UP_SELFIE";
+                    data.angle = "EXTREME CLOSE-UP PORTRAIT";
+                    data.focal = "SMARTPHONE PORTRAIT LENS / MACRO";
+                    data.pose = "FACE TAKING UP MOST OF THE FRAME, SHOWING SKIN TEXTURE DETAILS";
+                } else if (selectedStyle === "ANGLE_POV") {
+                    data.type = "FIRST_PERSON_POV";
+                    data.angle = "FIRST-PERSON POINT OF VIEW (POV)";
+                    data.focal = "WIDE ANGLE LENS (24MM)";
+                    data.pose = "PHOTOGRAPHED FROM THE PERSPECTIVE OF THE VIEWER, SUBJECT'S HANDS OR ARMS MIGHT BE VISIBLE REACHING OUT INTO THE SCENE";
                 }
-                else if (selectedStyle.includes("CANDID") || selectedStyle === "ACCIDENTAL") {
-                    if (selectedStyle === "CANDID_INTENTIONAL") {
-                        data.type = "CANDID_INTENTIONAL";
-                        data.angle = "EYE-LEVEL OR SLIGHT LOW ANGLE";
-                        data.pose = getRandom(["LAUGHING PLAYFULLY WHILE LOOKING AWAY", "WALKING AWAY BUT LOOKING BACK OVER SHOULDER WITH A SMILE"]);
-                        data.vibe = "PLANNED CANDID / AESTHETIC OUTFIT SHOT";
-                        data.gaze = "LOOKING AWAY OFF-CAMERA";
-                    } else if (selectedStyle === "CANDID_UNAWARE") {
-                        data.type = "CANDID_UNAWARE";
-                        data.angle = "EYE-LEVEL FROM A DISTANCE";
-                        data.pose = "DEEP IN THOUGHT OR FOCUSED ON AN ACTIVITY, COMPLETELY UNAWARE OF THE CAMERA";
-                        data.vibe = "TRUE CANDID, VOYEURISTIC FEEL";
-                        data.gaze = "AVERTING GAZE, FOCUSED ON SOMETHING ELSE";
-                    } else if (selectedStyle === "CANDID_TELEPHOTO") {
-                        data.type = "CANDID_UNAWARE";
-                        data.angle = "TELEPHOTO PAPARAZZI SHOT FROM FAR AWAY";
-                        data.focal = "TELEPHOTO ZOOM LENS (85MM+) WITH HIGH COMPRESSION AND SHALLOW DEPTH OF FIELD";
-                        data.pose = "WALKING OR SITTING NATURALLY, OBLIVIOUS TO BEING PHOTOGRAPHED";
-                        data.vibe = "PAPARAZZI STYLE, DISTANT OBSERVER";
-                    } else if (selectedStyle === "ACCIDENTAL") {
-                        data.type = "ACCIDENTAL_AWKWARD_SHOT";
-                        data.angle = "TILTED DUTCH ANGLE, SHAKY BLUR";
-                        data.pose = "BLURRY MID-MOVEMENT LIKE THEY JUST BUMPED THE CAMERA";
-                        data.vibe = "A FAILED/ACCIDENTAL PHOTO THAT LOOKS RAW, CHAOTIC, AND NOSTALGIC";
-                        data.gaze = "UNCOORDINATED GAZE";
-                    }
+                data.gaze = "DIRECT EYE CONTACT WITH THE LENS";
+            } 
+            else if (selectedStyle.includes("MIRROR")) {
+                data.type = "MIRROR_SELFIE";
+                data.vibe = "CLASSIC AESTHETIC MIRROR SELFIE";
+                data.angle = "STRAIGHT-ON MIRROR REFLECTION";
+                
+                if (selectedStyle === "MIRROR_STANDARD") {
+                    data.pose = "HOLDING PHONE/CAMERA SHOWING OUTFIT IN THE MIRROR";
+                } else if (selectedStyle === "MIRROR_WIDE") {
+                    data.pose = "TAKING A MIRROR SELFIE CAPTURING THE ENTIRE ROOM BACKGROUND";
+                    data.focal = "0.5X ULTRA WIDE LENS";
+                } else if (selectedStyle === "MIRROR_FACELESS") {
+                    data.pose = "HOLDING PHONE COMPLETELY COVERING THE FACE (SHY FACELESS AESTHETIC)";
                 }
-                else if (selectedStyle.includes("POSED") || selectedStyle.includes("PORTRAIT") || selectedStyle.includes("EXTREME")) {
-                    data.type = "POSED_SCENARIO";
-                    data.vibe = "A DELIBERATELY POSED SCENARIO PHOTOGRAPH, COMMEMORATIVE SNAPSHOT";
+                data.gaze = "LOOKING AT THE PHONE/CAMERA SCREEN REFLECTED IN THE MIRROR";
+            }
+            // KELOMPOK 2: FRAMING (UKURAN SHOT)
+            else if (selectedStyle.includes("FRAMING") || selectedStyle === "PORTRAIT_CLOSE_UP") {
+                data.type = "POSED_SCENARIO";
+                data.vibe = "WELL-FRAMED PHOTOGRAPH";
+                data.gaze = "LOOKING AT THE CAMERA";
+                
+                if (selectedStyle === "PORTRAIT_CLOSE_UP") {
+                    data.angle = "EYE-LEVEL CLOSE-UP";
+                    data.pose = "FRAMING THE SUBJECT FROM THE SHOULDERS UP, INTIMATE PORTRAIT";
+                    data.focal = "PORTRAIT LENS WITH SHALLOW DEPTH OF FIELD (BLURRED BACKGROUND)";
+                } else if (selectedStyle === "FRAMING_MEDIUM") {
+                    data.angle = "EYE-LEVEL MEDIUM SHOT (MS)";
+                    data.pose = "FRAMING THE SUBJECT FROM THE WAIST UP, CASUAL STANDING OR SITTING POSE";
+                    data.focal = "STANDARD LENS (35MM-50MM)";
+                } else if (selectedStyle === "FRAMING_LONG") {
+                    data.angle = "EYE-LEVEL LONG SHOT (LS)";
+                    data.pose = "FULL BODY SHOT FROM HEAD TO TOE, SHOWING THE ENTIRE OUTFIT";
+                    data.focal = "STANDARD TO WIDE LENS";
+                } else if (selectedStyle === "FRAMING_WIDE") {
+                    data.angle = "EXTREME LONG SHOT (ELS) / WIDE ANGLE SHOT";
+                    data.pose = "SUBJECT APPEARS SMALLER IN THE FRAME, EMPHASIZING THE VAST SURROUNDING ENVIRONMENT";
+                    data.focal = "ULTRA WIDE LENS (14MM-24MM)";
+                }
+            }
+            // KELOMPOK 3: ANGLES (SUDUT KAMERA EKSTREM)
+            else if (selectedStyle.includes("ANGLE") && selectedStyle !== "ANGLE_POV") {
+                data.type = "CREATIVE_ANGLE_SHOT";
+                data.vibe = "DYNAMIC AND CREATIVE PERSPECTIVE";
+                data.pose = "ADJUSTING POSE TO THE DYNAMIC CAMERA ANGLE";
+                
+                if (selectedStyle === "POSED_EYE_LEVEL") {
+                    data.angle = "EYE-LEVEL (SUDUT SEJAJAR MATA)";
+                    data.pose = "STANDING OR SITTING NATURALLY, PERFECTLY CENTERED AND LEVELED";
                     data.gaze = "DIRECT EYE CONTACT WITH THE CAMERA";
-
-                    if (selectedStyle === "POSED_EYE_LEVEL") {
-                        data.angle = "EYE-LEVEL FULL-BODY OR WAIST-UP SHOT"; // Mixed from Prompt 3
-                        data.pose = "STANDING OR SITTING CASUALLY, POSING CONFIDENTLY FOR THE CAMERA, CENTERED";
-                    } else if (selectedStyle === "PORTRAIT_CLOSE_UP") {
-                        // Based on Prompt 1
-                        data.angle = "EYE-LEVEL MEDIUM CLOSE-UP";
-                        data.pose = "FRAMING THE SUBJECT FROM THE CHEST UP, INTIMATE CONNECTION WITH VIEWER";
-                        data.focal = "PORTRAIT LENS WITH SHALLOW DEPTH OF FIELD (BLURRED BACKGROUND)";
-                    } else if (selectedStyle === "POSED_HIGH_ANGLE") {
-                        // Based on Prompt 2 and 5 overheads
-                        data.angle = "SLIGHTLY ANGLED FROM ABOVE (HIGH ANGLE), LOOKING DOWN AT SUBJECT";
-                        data.pose = "LOOKING UP AT THE CAMERA PLAYFULLY, SHOT FROM THE WAIST UP";
-                    } else if (selectedStyle === "POSED_LOW_ANGLE") {
-                        data.angle = "EXTREME LOW ANGLE (FROG EYE VIEW) LOOKING UP AT SUBJECT";
-                        data.pose = "STANDING TALL, POWERFUL POSE LOOKING DOWN AT THE LENS";
-                    } else if (selectedStyle === "POSED_WIDE") {
-                        data.angle = "WIDE ANGLE SHOT CAPTURING THE ENTIRE ENVIRONMENT";
-                        data.focal = "ULTRA WIDE LENS (14MM-24MM)";
-                        data.pose = "STANDING IN THE MIDDLE OF THE SCENE SHOWING OFF THE SURROUNDINGS";
-                    } else if (selectedStyle === "EXTREME_CCTV") {
-                        data.type = "CANDID_UNAWARE";
-                        data.angle = "SECURITY CAMERA CCTV POV, HIGH ANGLE WIDE CORNER SHOT";
-                        data.focal = "CCTV WIDE ANGLE LENS";
-                        data.pose = "WALKING OR STANDING NATURALLY, CAUGHT ON TAPE";
-                        data.vibe = "RAW SECURITY FOOTAGE AESTHETIC";
-                    } else if (selectedStyle === "EXTREME_FISHEYE") {
-                        data.angle = "EXTREME FISHEYE DISTORTION, BULGING CENTER";
-                        data.focal = "8MM FISHEYE ACTION CAM LENS";
-                        data.pose = "LEANING IN VERY CLOSE TO THE BULGING LENS PLAYFULLY";
-                    }
+                } else if (selectedStyle === "POSED_HIGH_ANGLE") {
+                    data.angle = "HIGH ANGLE SHOT, LOOKING DOWN AT THE SUBJECT";
+                    data.pose = "LOOKING UP SLIGHTLY TOWARDS THE CAMERA FROM BELOW";
+                    data.gaze = "LOOKING UP AT THE CAMERA";
+                } else if (selectedStyle === "POSED_LOW_ANGLE") {
+                    data.angle = "LOW ANGLE SHOT, LOOKING UP AT THE SUBJECT";
+                    data.pose = "STANDING TALL, POWERFUL POSE LOOKING DOWN SLIGHTLY AT THE LENS";
+                    data.gaze = "LOOKING DOWN AT THE CAMERA";
+                } else if (selectedStyle === "ANGLE_BIRD_EYE") {
+                    data.angle = "BIRD'S EYE VIEW, DIRECTLY OVERHEAD 90 DEGREES, TOP-DOWN SHOT";
+                    data.pose = "LAYING DOWN OR SITTING ON THE GROUND CAPTURED FROM DIRECTLY ABOVE";
+                    data.focal = "WIDE ANGLE LENS LOOKING STRAIGHT DOWN";
+                } else if (selectedStyle === "ANGLE_FROG_EYE") {
+                    data.angle = "WORM'S EYE VIEW / FROG EYE, EXTREME LOW ANGLE";
+                    data.pose = "CAMERA IS RESTING ON THE GROUND, SHOOTING DRAMATICALLY UPWARD AT THE SUBJECT'S FULL BODY";
+                    data.focal = "WIDE ANGLE LENS TO EXAGGERATE HEIGHT";
+                } else if (selectedStyle === "ANGLE_DUTCH") {
+                    data.angle = "DUTCH ANGLE / CANTED ANGLE, INTENTIONALLY TILTED CAMERA";
+                    data.vibe = "EDGY, DISORIENTING, OR DYNAMIC STREET VIBE";
+                    data.pose = "CASUAL POSE BUT THE HORIZON LINE IS TILTED";
                 }
-
-                if (customScenario) {
-                    data.pose = customScenario.toUpperCase();
-                    data.gaze = "ENGAGED IN THE SPECIFIC SCENARIO";
+            }
+            // KELOMPOK 4: CANDID
+            else if (selectedStyle.includes("CANDID") || selectedStyle === "ACCIDENTAL") {
+                data.type = "CANDID_UNAWARE";
+                data.angle = "EYE-LEVEL FROM A DISTANCE";
+                data.vibe = "TRUE CANDID, UNAWARE OF CAMERA";
+                data.gaze = "AVERTING GAZE, FOCUSED ON SOMETHING ELSE";
+                
+                if (selectedStyle === "CANDID_UNAWARE") {
+                    data.pose = "DEEP IN THOUGHT OR FOCUSED ON AN ACTIVITY NATURALLY";
+                } else if (selectedStyle === "CANDID_TELEPHOTO") {
+                    data.angle = "TELEPHOTO PAPARAZZI SHOT FROM FAR AWAY";
+                    data.focal = "TELEPHOTO ZOOM LENS (85MM+) WITH HIGH COMPRESSION AND BACKGROUND BLUR";
+                    data.pose = "WALKING OR SITTING NATURALLY, OBLIVIOUS TO BEING PHOTOGRAPHED";
+                } else if (selectedStyle === "CANDID_OTS") {
+                    data.angle = "OVER THE SHOULDER (OTS) SHOT";
+                    data.pose = "TAKEN FROM BEHIND SOMEONE ELSE'S SHOULDER, LOOKING AT THE MAIN SUBJECT";
+                    data.vibe = "VOYEURISTIC, FOLLOWING THE SUBJECT, CONVERSATIONAL PERSPECTIVE";
+                } else if (selectedStyle === "CANDID_INTENTIONAL") {
+                    data.type = "CANDID_INTENTIONAL";
+                    data.pose = "LAUGHING PLAYFULLY WHILE LOOKING AWAY, AESTHETIC 'PLANNED CANDID' POSE";
+                    data.vibe = "PLANNED CANDID / AESTHETIC OUTFIT SHOT";
+                } else if (selectedStyle === "ACCIDENTAL") {
+                    data.type = "ACCIDENTAL_AWKWARD_SHOT";
+                    data.angle = "TILTED DUTCH ANGLE, SHAKY BLUR";
+                    data.pose = "BLURRY MID-MOVEMENT LIKE THEY JUST BUMPED THE CAMERA";
+                    data.vibe = "A FAILED/ACCIDENTAL PHOTO THAT LOOKS RAW, CHAOTIC, AND NOSTALGIC";
+                    data.gaze = "UNCOORDINATED GAZE";
                 }
-
-                if (!customScenario && numSubjects === 1 && selectedStyle.includes("POSED") && !hasJackpot && selectedStyle !== "PORTRAIT_CLOSE_UP") {
-                    data.pose = getRandom([
-                        data.pose, 
-                        "RIGHT HAND RAISED AND TOUCHING HER HAIR",
-                        "SITTING WITH LEGS CROSSED AND MOUTH SLIGHTLY PURSED, PLAYFUL POUTY EXPRESSION",
-                        "SITTING CURLED UP, ONE ARM RESTING ON KNEES, RELAXED POSE",
-                        "POSITIONED SLIGHTLY TO THE LEFT OF THE FRAME (RULE OF THIRDS)" // Prompt 4 influence
-                    ]);
+            }
+            // KELOMPOK 5: EXTREME
+            else if (selectedStyle.includes("EXTREME")) {
+                if (selectedStyle === "EXTREME_CCTV") {
+                    data.type = "CANDID_UNAWARE";
+                    data.angle = "SECURITY CAMERA CCTV POV, HIGH ANGLE WIDE CORNER SHOT";
+                    data.focal = "CCTV WIDE ANGLE LENS";
+                    data.pose = "WALKING OR STANDING NATURALLY, CAUGHT ON TAPE";
+                    data.vibe = "RAW SECURITY FOOTAGE AESTHETIC";
+                    data.gaze = "UNAWARE";
+                } else if (selectedStyle === "EXTREME_FISHEYE") {
+                    data.type = "CREATIVE_ANGLE_SHOT";
+                    data.angle = "EXTREME FISHEYE DISTORTION, BULGING CENTER";
+                    data.focal = "8MM FISHEYE ACTION CAM LENS";
+                    data.pose = "LEANING IN VERY CLOSE TO THE BULGING LENS PLAYFULLY";
+                    data.gaze = "LOOKING DIRECTLY AT LENS";
                 }
+            }
 
-                if (numSubjects > 1 && !customScenario && !selectedStyle.includes("SELFIE") && !selectedStyle.includes("MIRROR")) {
-                    if (genderVal === "COUPLE") {
-                        data.pose = "COUPLE STANDING ARM IN ARM OR HUGGING, SMILING AT THE CAMERA";
-                    } else {
-                        data.pose = `GROUP OF ${numSubjects} HANGING OUT, POSING TOGETHER CASUALLY`;
-                    }
+            if (customScenario) {
+                data.pose = customScenario.toUpperCase();
+                data.gaze = "ENGAGED IN THE SPECIFIC SCENARIO";
+            }
+
+            if (!customScenario && numSubjects === 1 && selectedStyle.includes("POSED") && !hasJackpot && selectedStyle !== "PORTRAIT_CLOSE_UP") {
+                data.pose = getRandom([
+                    data.pose, 
+                    "RIGHT HAND RAISED AND TOUCHING HER HAIR",
+                    "SITTING WITH LEGS CROSSED AND MOUTH SLIGHTLY PURSED, PLAYFUL POUTY EXPRESSION",
+                    "POSITIONED SLIGHTLY TO THE LEFT OF THE FRAME (RULE OF THIRDS)"
+                ]);
+            }
+
+            if (numSubjects > 1 && !customScenario && !selectedStyle.includes("SELFIE") && !selectedStyle.includes("MIRROR")) {
+                if (genderVal === "COUPLE") {
+                    data.pose = "COUPLE STANDING ARM IN ARM OR HUGGING, SMILING AT THE CAMERA";
+                } else {
+                    data.pose = `GROUP OF ${numSubjects} HANGING OUT, POSING TOGETHER CASUALLY`;
                 }
             }
 
@@ -1245,7 +1302,8 @@
 
             // SMART STREET / SKATEPARK LOGIC
             if (envName.includes("STREET") || envName.includes("SKATEPARK") || envName.includes("ROADSIDE") || envName.includes("MOUNTAIN ROAD") || envName.includes("BRIDGE") || envName.includes("ALLEYWAY")) {
-                if (shotData.type === "POSED_SCENARIO" && !customScenario && !envName.includes("CROSSWALK")) {
+                // Jangan override pose jika user memakai POV Ultrawide
+                if (shotData.type === "POSED_SCENARIO" && !customScenario && !envName.includes("CROSSWALK") && cameraStyleVal !== "SELFIE_05X_TOPDOWN_POV") {
                     shotData.pose = getRandom(["SITTING RELAXED ON THE SIDEWALK OR LEDGE", "SQUATTING CASUALLY BY THE ROAD", "LEANING AGAINST A PARKED CAR OR MOTORCYCLE", "STANDING CASUALLY WITH ONE HAND IN POCKET", "STANDING WITH ARMS CROSSED CONFIDENTLY"]);
                     shotData.vibe = "STREETSTYLE HANGOUT, OUTDOOR CHILLING";
                 }
@@ -1451,7 +1509,7 @@
                     }
 
                     const restrictPhones = (shotData.type === "FRONT_CAMERA_SELFIE" || shotData.type === "CLOSE_UP_SELFIE" || shotData.type === "CANDID_INTENTIONAL" || shotData.type === "POSED_SCENARIO");
-                    if (restrictPhones && envName && !(envName.includes("ELEVATOR")) && !(envName.includes("STADIUM")) && !(envName.includes("BRIDGE")) && !(envName.includes("DARK ROOM")) && pWardrobe.acc && pWardrobe.acc.includes("PHONE")) {
+                    if (restrictPhones && envName && !(envName.includes("ELEVATOR")) && !(envName.includes("STADIUM")) && !(envName.includes("BRIDGE")) && !(envName.includes("DARK ROOM")) && pWardrobe.acc && pWardrobe.acc.includes("PHONE") && cameraStyleVal !== "SELFIE_05X_TOPDOWN_POV") {
                         let safeAccs = aPool.filter(a => !a.includes("PHONE"));
                         pWardrobe.acc = safeAccs.length > 0 ? getRandom(safeAccs) : "NONE";
                     }
@@ -1468,11 +1526,11 @@
                 }
 
                 let finalExpression = getRandom(beautyTypes);
-                if (pGender.genderId === "FEMALE" && !customScenario && (shotData.type === "FRONT_CAMERA_SELFIE" || shotData.type === "CLOSE_UP_SELFIE" || shotData.type === "MIRROR_SELFIE" || shotData.type === "CANDID_INTENTIONAL" || shotData.type === "POSED_SCENARIO")) {
+                if (pGender.genderId === "FEMALE" && !customScenario && (shotData.type === "FRONT_CAMERA_SELFIE" || shotData.type === "CLOSE_UP_SELFIE" || shotData.type === "MIRROR_SELFIE" || shotData.type === "CANDID_INTENTIONAL" || shotData.type === "POSED_SCENARIO" || shotData.type === "POV_ULTRAWIDE_SELFIE")) {
                     if (Math.random() < 0.6) {
                         finalExpression += ", " + getRandom(["PLAYFULLY BITING LOWER LIP", "STICKING TONGUE OUT PLAYFULLY (JULUR LIDAH)", "WINKING AT CAMERA", "SEDUCTIVE GAZE", "CUTE POUTING LIPS", "LAUGHING WITH EYES SQUINTED CLOSED"]);
                     }
-                } else if (pGender.genderId === "MALE" && !customScenario && (shotData.type === "FRONT_CAMERA_SELFIE" || shotData.type === "CLOSE_UP_SELFIE" || shotData.type === "MIRROR_SELFIE" || shotData.type === "CANDID_INTENTIONAL")) {
+                } else if (pGender.genderId === "MALE" && !customScenario && (shotData.type === "FRONT_CAMERA_SELFIE" || shotData.type === "CLOSE_UP_SELFIE" || shotData.type === "MIRROR_SELFIE" || shotData.type === "CANDID_INTENTIONAL" || shotData.type === "POV_ULTRAWIDE_SELFIE")) {
                     if (Math.random() < 0.3) {
                         finalExpression += ", " + getRandom(["MAKING A SILLY DUCK FACE", "SMILING WARMLY", "SERIOUS COOL EXPRESSION"]);
                     }
@@ -1648,6 +1706,12 @@
                 imagePromptData["NEGATIVE_PROMPT"] += ", fake watch, oversized watch, generic car interior, wrong dashboard, staged pose";
             }
 
+            // Exception: For Top-Down POV, hands and camera should NOT be negative prompted
+            if (shotData.type === "POV_ULTRAWIDE_SELFIE") {
+                imagePromptData.CAMERA["RESTRICTIONS"] = "ARMS AND HANDS MUST BE VISIBLE HOLDING THE INVISIBLE CAMERA IN FRONT OF THE SUBJECT.";
+                imagePromptData["NEGATIVE_PROMPT"] = baseNegativePrompt + ", flat angle, eye-level, mirror reflection";
+            }
+
             // USER PERSONALIZATION INCORPORATED HERE
             if (strictVal === "STRICT") {
                 const strictWeightEl = document.getElementById('strictWeight');
@@ -1664,7 +1728,9 @@
             }
 
             let videoSceneDynamics = [];
-            if (shotData.type === "POSED_SCENARIO" && customScenario) {
+            if (shotData.type === "POV_ULTRAWIDE_SELFIE") {
+                videoSceneDynamics = ["SUBJECT HOLDING THE CAMERA WHILE SWINGING LEGS PLAYFULLY", "SUBJECT LOOKING UP AT THE CAMERA AND SMILING WIDELY"];
+            } else if (shotData.type === "POSED_SCENARIO" && customScenario) {
                 videoSceneDynamics = [customScenario.toUpperCase()];
             } else if (numSubjects === 1) {
                 videoSceneDynamics = ["SUBJECT TALKING ANIMATEDLY TO THE CAMERA USING INDONESIAN SLANG", "AWKWARD SILENCE HANGING OUT AT THE LOCAL SPOT", "SUBJECT WIPING SWEAT CASUALLY IN THE TROPICAL HEAT", "LIP-SYNCING OR DANCING TO VIRAL TIKTOK AUDIO"];
