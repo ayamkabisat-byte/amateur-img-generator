@@ -187,6 +187,7 @@
                         <i class="fa-solid fa-lock-open cursor-pointer hover:text-white" onclick="toggleLock('compSelect', this)"></i>
                     </label>
                     <select id="compSelect" onchange="triggerGenerate()" class="w-full bg-slate-900 text-cyan-200 border border-cyan-700 rounded p-2 outline-none focus:border-cyan-400 cursor-pointer">
+                        <option value="NONE">❌ Tidak Ada (Amateur Style)</option>
                         <option value="RANDOM">🎲 Acak (Otomatis)</option>
                         <option value="GOLDEN_RATIO">Golden Ratio (Fibonacci Spiral)</option>
                         <option value="RULE_OF_THIRDS">Rule of Thirds (Sepertiga)</option>
@@ -1401,10 +1402,10 @@
             let shotData = getShotTypeData(selectedEraId, cameraStyleVal, numSubjects, genderVal, customScenario, envName);
 
             // LOGIKA KOMPOSISI FRAME
-            let finalCompositionRule = "NATURAL AMATEUR COMPOSITION";
+            let finalCompositionRule = "NATURAL AMATEUR COMPOSITION, UNPLANNED FRAMING";
             if (cameraStyleVal === "MATCH_POSE") {
                 finalCompositionRule = "STRICTLY MATCH THE COMPOSITION AND FRAMING OF THE REFERENCE IMAGE";
-            } else {
+            } else if (compVal !== "NONE") {
                 let selectedCompId = compVal;
                 if (selectedCompId === "RANDOM") {
                     // Jika acak, ambil salah satu kunci (kecuali RANDOM jika ada listnya sendiri)
@@ -1414,14 +1415,13 @@
                 if (compositionsRules[selectedCompId]) {
                     finalCompositionRule = compositionsRules[selectedCompId];
                 }
-                
-                // Jika Selfie UltraWide atau CCTV, jangan timpakan Rule of Thirds/Symmetry secara paksa 
-                // karena bertentangan dengan angle ekstrem bawaannya.
-                if (shotData.type === "POV_ULTRAWIDE_SELFIE" || cameraStyleVal === "EXTREME_CCTV") {
-                    finalCompositionRule += " (Adapted dynamically to extreme focal length and angle)";
-                }
             }
-
+                
+            // Jika Selfie UltraWide atau CCTV, jangan timpakan Rule of Thirds/Symmetry secara paksa 
+            // karena bertentangan dengan angle ekstrem bawaannya.
+            if (shotData.type === "POV_ULTRAWIDE_SELFIE" || cameraStyleVal === "EXTREME_CCTV") {
+                finalCompositionRule += " (Adapted dynamically to extreme focal length and angle)";
+            }
 
             // JIKA OPSI REFERENSI POSE DIAKTIFKAN, KITA OVERRIDE POSE & ANGLE DI SINI
             if (cameraStyleVal === "MATCH_POSE") {
@@ -1963,6 +1963,7 @@
                     else if (id === 'aestheticSelect') el.value = "DEFAULT";
                     else if (id === 'strictSelect') el.value = "FLEXIBLE";
                     else if (id === 'bodyTypeSelect') el.value = "MATCH";
+                    else if (id === 'compSelect') el.value = "NONE";
                     else el.value = "RANDOM";
                 }
             });
