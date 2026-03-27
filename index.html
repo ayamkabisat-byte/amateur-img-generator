@@ -58,8 +58,8 @@
     <div id="mainContent" class="w-full max-w-7xl transition-all duration-500">
         <!-- Header -->
         <div class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2"><i class="fa-solid fa-camera-retro text-red-500 mr-2"></i> Indonesian Amateur Shot V3.8</h1>
-            <p class="text-slate-400">Logika Terpadu + Ratusan Skenario Gen-Z + Smart Lock + Pose Reference Toggle.</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2"><i class="fa-solid fa-camera-retro text-red-500 mr-2"></i> Indonesian Amateur Shot V3.9</h1>
+            <p class="text-slate-400">Logika Terpadu + Ratusan Skenario Gen-Z + Smart Lock + Komposisi Lengkap.</p>
         </div>
 
         <!-- NEW UI DASHBOARD: FILTERS & PARAMETERS -->
@@ -179,6 +179,27 @@
 
             <!-- GROUP 3: TECHNICALS & SCENARIO -->
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg text-sm items-end">
+                
+                <!-- NEW COMPOSITION DROPDOWN -->
+                <div>
+                    <label class="flex justify-between items-center text-cyan-400 mb-1 font-semibold text-xs transition-colors">
+                        <span><i class="fa-solid fa-crop-simple"></i> Komposisi Frame</span>
+                        <i class="fa-solid fa-lock-open cursor-pointer hover:text-white" onclick="toggleLock('compSelect', this)"></i>
+                    </label>
+                    <select id="compSelect" onchange="triggerGenerate()" class="w-full bg-slate-900 text-cyan-200 border border-cyan-700 rounded p-2 outline-none focus:border-cyan-400 cursor-pointer">
+                        <option value="RANDOM">🎲 Acak (Otomatis)</option>
+                        <option value="GOLDEN_RATIO">Golden Ratio (Fibonacci Spiral)</option>
+                        <option value="RULE_OF_THIRDS">Rule of Thirds (Sepertiga)</option>
+                        <option value="SYMMETRY">Symmetry and Balance (Simetris)</option>
+                        <option value="GOLDEN_TRIANGLE">Golden Triangle (Segitiga Emas)</option>
+                        <option value="DIAGONAL">Diagonal (Garis Miring)</option>
+                        <option value="FILL_FRAME">Fill the Frame (Mengisi Bingkai)</option>
+                        <option value="NEGATIVE_SPACE">Negative Space (Ruang Kosong)</option>
+                        <option value="LEADING_LINES">Leading Lines (Garis Pengarah)</option>
+                        <option value="FRAMING">Framing (Bingkai Alami)</option>
+                    </select>
+                </div>
+
                 <div>
                     <label class="flex justify-between items-center text-yellow-400 mb-1 font-semibold text-xs transition-colors">
                         <span><i class="fa-solid fa-star"></i> Hari Raya</span>
@@ -345,6 +366,19 @@
             { id: "MODERN_2020S", weight: 40 }, { id: "TIMELESS_BASIC", weight: 25 }, { id: "HIPSTER_2010S", weight: 15 }, 
             { id: "Y2K_2000S", weight: 10 }, { id: "GRUNGE_1990S", weight: 10 }
         ];
+
+        // --- NEW: COMPOSITION DICTIONARY ---
+        const compositionsRules = {
+            "GOLDEN_RATIO": "Golden Ratio composition, Fibonacci spiral layout, directing viewer eye naturally through a curve",
+            "RULE_OF_THIRDS": "Rule of Thirds composition, subject placed on the intersecting grid lines, asymmetrical visual balance",
+            "SYMMETRY": "Perfect Symmetry and Balance, subject dead center, mirrored elements on left and right or top and bottom",
+            "GOLDEN_TRIANGLE": "Golden Triangle composition, strong diagonal lines creating intersecting triangle zones in the frame",
+            "DIAGONAL": "Dynamic diagonal composition, angled leading lines creating a sense of motion and depth",
+            "FILL_FRAME": "Fill the frame completely, extreme close-up or tight framing, subject dominates the entire image with almost no background",
+            "NEGATIVE_SPACE": "Vast negative space, minimalist composition, small subject placed in a large empty surrounding area to emphasize scale",
+            "LEADING_LINES": "Strong leading lines guiding the viewer's eye towards the main subject, intense depth perspective",
+            "FRAMING": "Natural framing within the image, subject framed by environmental elements (windows, branches, doors) adding context"
+        };
 
         // --- HIGGSFIELD & NEW AESTHETIC STYLES ---
         const aestheticFilters = {
@@ -1299,6 +1333,7 @@
             const genderVal = document.getElementById('genderSelect')?.value || "RANDOM";
             
             const cameraStyleVal = document.getElementById('cameraSelect')?.value || "RANDOM";
+            const compVal = document.getElementById('compSelect')?.value || "RANDOM"; // Mengambil value Komposisi
             const locVal = document.getElementById('locSelect')?.value || "RANDOM";
             const timeVal = document.getElementById('timeSelect')?.value || "RANDOM";
             const weatherVal = document.getElementById('weatherSelect')?.value || "RANDOM";
@@ -1364,6 +1399,29 @@
             
             // SMART CAMERA DATA PROCESSING
             let shotData = getShotTypeData(selectedEraId, cameraStyleVal, numSubjects, genderVal, customScenario, envName);
+
+            // LOGIKA KOMPOSISI FRAME
+            let finalCompositionRule = "NATURAL AMATEUR COMPOSITION";
+            if (cameraStyleVal === "MATCH_POSE") {
+                finalCompositionRule = "STRICTLY MATCH THE COMPOSITION AND FRAMING OF THE REFERENCE IMAGE";
+            } else {
+                let selectedCompId = compVal;
+                if (selectedCompId === "RANDOM") {
+                    // Jika acak, ambil salah satu kunci (kecuali RANDOM jika ada listnya sendiri)
+                    const compKeys = Object.keys(compositionsRules);
+                    selectedCompId = compKeys[Math.floor(Math.random() * compKeys.length)];
+                }
+                if (compositionsRules[selectedCompId]) {
+                    finalCompositionRule = compositionsRules[selectedCompId];
+                }
+                
+                // Jika Selfie UltraWide atau CCTV, jangan timpakan Rule of Thirds/Symmetry secara paksa 
+                // karena bertentangan dengan angle ekstrem bawaannya.
+                if (shotData.type === "POV_ULTRAWIDE_SELFIE" || cameraStyleVal === "EXTREME_CCTV") {
+                    finalCompositionRule += " (Adapted dynamically to extreme focal length and angle)";
+                }
+            }
+
 
             // JIKA OPSI REFERENSI POSE DIAKTIFKAN, KITA OVERRIDE POSE & ANGLE DI SINI
             if (cameraStyleVal === "MATCH_POSE") {
@@ -1726,7 +1784,7 @@
                 if (aesData) {
                     finalLightingSource = aesData.lighting;
                     finalLightingQual = `[FILTER: ${activeAesthetic}] ` + (aesData.render || finalLightingQual);
-                    if (poseRefVal !== "MATCH_POSE") shotData.cameraModel = aesData.cameraType; 
+                    if (cameraStyleVal !== "MATCH_POSE") shotData.cameraModel = aesData.cameraType; 
                     finalCamType = `${shotData.type}, ENHANCED WITH ${activeAesthetic} VIBE`;
                     finalRenderEngine = aesData.render + ", RETAINING LOCAL INDONESIAN CONTEXT";
                     finalFlaws = aesData.render; 
@@ -1751,6 +1809,7 @@
                     "MODEL": shotData.cameraModel,
                     "FOCALLNGTH": shotData.focal,
                     "ANGLE": shotData.angle,
+                    "COMPOSITION_RULE": finalCompositionRule, // NEW PARAMETER FOR COMPOSITIONS
                     "TYPE": `AMATEUR SNAPSHOT, ${finalCamType}`
                 },
                 "SUBJECT": {
@@ -1817,6 +1876,7 @@
                 imagePromptData["NEGATIVE_PROMPT"] = baseNegativePrompt + ", flat angle, eye-level, mirror reflection";
             }
 
+            // Menerapkan personalisasi profil Anda ("Enable strict facial consistency mode...")
             if (strictVal === "STRICT") {
                 const strictWeightEl = document.getElementById('strictWeight');
                 const strictWeightVal = strictWeightEl ? strictWeightEl.value : "1.0";
@@ -1893,7 +1953,8 @@
         }
 
         function resetAndGenerate() {
-            const dropdownIds = ['numSelect', 'ageSelect', 'holidaySelect', 'eraSelect', 'locSelect', 'cameraSelect', 'genderSelect', 'timeSelect', 'weatherSelect', 'aestheticSelect', 'bodyTypeSelect', 'hairAccSelect', 'strictSelect'];
+            // FIX: Menghapus referensi ke elemen yang tidak ada (poseRefSelect) dan menambahkan compSelect
+            const dropdownIds = ['numSelect', 'ageSelect', 'holidaySelect', 'eraSelect', 'locSelect', 'cameraSelect', 'compSelect', 'genderSelect', 'timeSelect', 'weatherSelect', 'aestheticSelect', 'bodyTypeSelect', 'hairAccSelect', 'strictSelect'];
             
             dropdownIds.forEach(id => {
                 const el = document.getElementById(id);
@@ -1901,7 +1962,6 @@
                     if (id === 'holidaySelect') el.value = "RANDOM_HOLIDAY";
                     else if (id === 'aestheticSelect') el.value = "DEFAULT";
                     else if (id === 'strictSelect') el.value = "FLEXIBLE";
-                    else if (id === 'poseRefSelect') el.value = "NONE";
                     else if (id === 'bodyTypeSelect') el.value = "MATCH";
                     else el.value = "RANDOM";
                 }
