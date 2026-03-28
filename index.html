@@ -493,6 +493,9 @@
             { env: "NIGHT BEACH WITH CITY LIGHTS", arch: "DARK SAND BEACH, NIGHT SKY", props: "GLOWING CITY SKYLINE OR ILLUMINATED BRIDGE IN THE BACKGROUND, WAVES RUSHING", era_id: "MODERN_2020S" },
             { env: "CITY SQUARE WITH FERRIS WHEEL", arch: "BRICK PAVED PEDESTRIAN SQUARE", props: "TALL FERRIS WHEEL, ICE CREAM TRUCK, PEDESTRIANS IN BACKGROUND", era_id: "MODERN_2020S" },
             { env: "OUTDOOR MUSIC FESTIVAL CROWD", arch: "OPEN OUTDOOR FIELD CONCERT", props: "LARGE CONCERT STAGE, HUGE CROWD OF PEOPLE IN BACKGROUND", era_id: "MODERN_2020S" },
+            { env: "LIVE CONCERT STAGE (DI ATAS PANGGUNG KONSER)", arch: "MASSIVE STAGE PLATFORM, STAGE RIGGING, BRIGHT CONCERT LIGHTS", props: "MICROPHONE STAND, STAGE MONITORS, HUGE CROWD IN THE BACKGROUND", era_id: "MODERN_2020S" },
+            { env: "CONCERT PHOTOGRAPHY PIT (DIFOTO DARI BAWAH OLEH FOTOGRAFER)", arch: "EDGE OF A HIGH CONCERT STAGE VIEWED FROM BELOW", props: "STAGE LIGHTS POINTING DOWN, METALLIC BARRICADE, CONCERT VIBE", era_id: "MODERN_2020S" },
+            { env: "CONCERT BACKSTAGE (BELAKANG PANGGUNG KONSER)", arch: "DARK INDUSTRIAL ARENA HALLWAY OR TENT", props: "BLACK FLIGHT CASES (HARDCASE), COILED CABLES, RACKS OF EQUIPMENT", era_id: "MODERN_2020S" },
             { env: "SUNLIT ROOM WITH SHADOWS", arch: "INDOOR ROOM NEAR A WINDOW", props: "DRAMATIC SUNLIGHT AND SHADOW PLAY ON THE WALLS", era_id: "MODERN_2020S" },
             { env: "CITY BUS STOP", arch: "GLASS BUS SHELTER ON A BUSY STREET", props: "CITY TRAFFIC, BUS STOP SIGN", era_id: "MODERN_2020S" },
             { env: "LAKESIDE PROMENADE", arch: "PAVED PATHWAY NEXT TO A LARGE LAKE", props: "MOUNTAINS IN THE DISTANCE, CLEAR BLUE WATER", era_id: "MODERN_2020S" },
@@ -1477,6 +1480,26 @@
                     shotData.vibe = "STREETSTYLE HANGOUT, OUTDOOR CHILLING";
                 }
             }
+
+            // SMART CONCERT LOGIC
+            if (envName.includes("CONCERT STAGE") && cameraStyleVal !== "MATCH_POSE") {
+                if (shotData.type === "POSED_SCENARIO" && !customScenario) {
+                    shotData.pose = getRandom(["PERFORMING ENERGETICALLY WITH A MICROPHONE", "STANDING CONFIDENTLY ON STAGE LOOKING AT THE CROWD", "SQUATTING AT THE EDGE OF THE STAGE POINTING AT THE CAMERA"]);
+                    shotData.vibe = "ROCKSTAR CONCERT PERFORMANCE VIBE";
+                }
+            }
+            if (envName.includes("PHOTOGRAPHY PIT") && cameraStyleVal !== "MATCH_POSE") {
+                shotData.angle = "LOW ANGLE SHOT, LOOKING UP AT THE SUBJECT ON STAGE";
+                shotData.vibe = "PROFESSIONAL CONCERT PHOTOGRAPHY VIBE";
+                if (shotData.type === "POSED_SCENARIO" && !customScenario) {
+                    shotData.pose = "LEANING OVER THE EDGE OF THE STAGE LOOKING DOWN AT THE CAMERA INTENSELY";
+                }
+            }
+            if (envName.includes("BACKSTAGE") && cameraStyleVal !== "MATCH_POSE") {
+                if (shotData.type === "POSED_SCENARIO" && !customScenario) {
+                    shotData.pose = "SITTING CASUALLY ON A LARGE BLACK EQUIPMENT FLIGHT CASE";
+                }
+            }
             
             if (envName.includes("BEACH") && shotData.type !== "CANDID_UNAWARE" && cameraStyleVal !== "MATCH_POSE") {
                 if (envName.includes("NIGHT")) {
@@ -1645,6 +1668,20 @@
                             aPool.push("WOVEN STRAW BAG");
                         }
                     }
+                    
+                    if (envName.includes("CONCERT") || envName.includes("STAGE") || envName.includes("BACKSTAGE")) {
+                        if (pGender.genderId === "MALE") {
+                            tPool.push("BLACK SLEEVELESS BAND SHIRT", "OPEN LEATHER JACKET WITH NO SHIRT", "OVERSIZED VINTAGE BAND T-SHIRT");
+                            aPool.push("SILVER CHAIN NECKLACE", "HOLDING A MICROPHONE", "ELECTRIC GUITAR SLUNG OVER SHOULDER");
+                        } else {
+                            tPool.push("EDGY CROP TOP WITH FISHNET ACCENTS", "OVERSIZED BAND T-SHIRT AS A DRESS", "BLACK LEATHER CORSET");
+                            bPool.push("BLACK CARGO PANTS WITH CHAINS", "PLEATED PLAID SKIRT WITH FISHNETS");
+                            aPool.push("CHUNKY SILVER CHAIN NECKLACE", "HOLDING A MICROPHONE");
+                        }
+                        if (envName.includes("BACKSTAGE")) {
+                            aPool.push("HOLDING A BACKSTAGE VIP LANYARD PASS");
+                        }
+                    }
                 }
 
                 if(aPool.length === 0) aPool = ["NONE"];
@@ -1742,6 +1779,9 @@
             } else if (timeStr === "NIGHT" && lighting.source.includes("SUNLIGHT")) {
                 finalLightingSource = "ARTIFICIAL NEON OR STREET LAMPS";
                 finalLightingQual = "HIGH CONTRAST, NOISY SHADOWS";
+            } else if (envName && (envName.includes("CONCERT STAGE") || envName.includes("PHOTOGRAPHY PIT"))) {
+                finalLightingSource = "INTENSE STAGE LIGHTING, SPOTLIGHTS, AND LASERS";
+                finalLightingQual = "DRAMATIC RIM LIGHTING, HIGH CONTRAST, COLORFUL HUES";
             }
 
             if (timeStr === "NIGHT" || (envName && (envName.includes("CLUB") || envName.includes("DARK") || envName.includes("ALLEY") || envName.includes("NIGHT")))) {
