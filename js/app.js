@@ -9,6 +9,7 @@
     peopleCount: 2, era:'AUTO', region:'INDONESIA', scene:'AUTO', device:'AUTO', shot:'AUTO', aesthetic:'AMATEUR_DEFAULT', lighting:'AUTO',
     composition:'NONE', time:'AUTO', weather:'AUTO', event:'NONE', customScenario:'',
     videoAudio:'SILENT', videoMotion:'NATURAL', videoCameraMotion:'HANDHELD', activeTab:'natural',
+    locks:{era:false,region:false,scene:false,device:false,shot:false,aesthetic:false,lighting:false}, lockedResolved:{},
     seeds:{scene:48121,camera:15577,faces:80191,wardrobe:36103,motion:77321}, subjects:[]
   };
   let state = loadState();
@@ -60,7 +61,7 @@
   function option(select, items){select.innerHTML='';items.forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;select.appendChild(o)})}
   function label(items,val){return items.find(x=>x[0]===val)?.[1]||val}
 
-  function loadState(){try{const p=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');return p?{...clone(defaults),...p,seeds:{...defaults.seeds,...(p.seeds||{})}}:clone(defaults)}catch{return clone(defaults)}}
+  function loadState(){try{const p=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');return p?{...clone(defaults),...p,locks:{...defaults.locks,...(p.locks||{})},lockedResolved:{...(p.lockedResolved||{})},seeds:{...defaults.seeds,...(p.seeds||{})}}:clone(defaults)}catch{return clone(defaults)}}
   function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
 
   function initSelects(){
@@ -137,22 +138,24 @@
     if(s.identitySource==='REFERENCE' && s.body==='MATCH_REFERENCE' && !s.scope.includes('body'))s.scope.push('body'); render();
   }
 
+  function resolvedOrLocked(key, value){return state.locks?.[key] && state.lockedResolved?.[key] ? state.lockedResolved[key] : value}
   function resolve(){
-    let scene=state.scene==='AUTO'?pick(D.scenes.filter(x=>x[0]!=='AUTO').map(x=>x[0]),state.seeds.scene,'scene-pick'):state.scene;
-    let era=state.era==='AUTO'?pick(['2020S','2020S','2010S','2000S','1990S','TIMELESS'],state.seeds.scene,'era'):state.era;
-    let device=state.device==='AUTO'?deviceForEra(era,state.seeds.camera):state.device;
-    let shot=state.shot==='AUTO'?pick(['CANDID','SELFIE_STANDARD','SELFIE_05X','MEDIUM','FULL_BODY','ACCIDENTAL','MIRROR','PORTRAIT_CLOSE'],state.seeds.camera,'shot'):state.shot;
+    let scene=resolvedOrLocked('scene',state.scene==='AUTO'?pick(D.scenes.filter(x=>x[0]!=='AUTO').map(x=>x[0]),state.seeds.scene,'scene-pick'):state.scene);
+    let era=resolvedOrLocked('era',state.era==='AUTO'?pick(['2020S','2020S','2010S','2000S','1990S','TIMELESS'],state.seeds.scene,'era'):state.era);
+    let region=resolvedOrLocked('region',state.region);
+    let device=resolvedOrLocked('device',state.device==='AUTO'?deviceForEra(era,state.seeds.camera):state.device);
+    let shot=resolvedOrLocked('shot',state.shot==='AUTO'?pick(['CANDID','SELFIE_STANDARD','SELFIE_05X','MEDIUM','FULL_BODY','ACCIDENTAL','MIRROR','PORTRAIT_CLOSE'],state.seeds.camera,'shot'):state.shot);
     if((shot==='MIRROR'||shot==='MIRROR_FACELESS')&&!['BATHROOM_MIRROR','BEDROOM','KOS_ROOM','ELEVATOR','MALL','THRIFT','HOTEL'].includes(scene)) scene='BATHROOM_MIRROR';
     if(shot==='CCTV')device='CCTV';
     const refPose=state.subjects.some(s=>s.identitySource==='REFERENCE'&&(s.scope.includes('pose')||s.scope.includes('composition')||s.scope.includes('camera')));
     if(state.shot==='MATCH_REFERENCE'||refPose) shot='MATCH_REFERENCE';
-    let aesthetic=state.aesthetic;
-    let lighting=state.lighting==='AUTO'?lightingFor(scene,aesthetic,state.seeds.camera):state.lighting;
+    let aesthetic=resolvedOrLocked('aesthetic',state.aesthetic);
+    let lighting=resolvedOrLocked('lighting',state.lighting==='AUTO'?lightingFor(scene,aesthetic,state.seeds.camera):state.lighting);
     let time=state.time==='AUTO'?timeFor(scene,state.seeds.scene):state.time;
-    let weather=state.weather==='AUTO'?weatherFor(state.region,scene,state.seeds.scene):state.weather;
+    let weather=state.weather==='AUTO'?weatherFor(region,scene,state.seeds.scene):state.weather;
     let comp=state.composition;
     if(refPose && state.subjects.some(s=>s.scope.includes('composition'))) comp='MATCH_REFERENCE';
-    return {scene,era,device,shot,aesthetic,lighting,time,weather,composition:comp,event:state.event,region:state.region,customScenario:state.customScenario.trim(),seed:clone(state.seeds)};
+    return {scene,era,device,shot,aesthetic,lighting,time,weather,composition:comp,event:state.event,region,customScenario:state.customScenario.trim(),seed:clone(state.seeds)};
   }
   function deviceForEra(era,seed){const map={
     '2020S':['IPHONE_MODERN','ANDROID_BUDGET','CCD_DIGICAM'],'2010S':['IPHONE_MODERN','ANDROID_BUDGET','OLD_SMARTPHONE','CCD_DIGICAM'],'2000S':['CCD_DIGICAM','POINT_SHOOT_DIGITAL','NOKIA_PHONE','FLIP_PHONE'],'1990S':['DISPOSABLE','FILM_35MM','POLAROID'],'1980S':['FILM_35MM','POLAROID','DISPOSABLE'],TIMELESS:['IPHONE_MODERN','CCD_DIGICAM','FILM_35MM']};return pick(map[era]||map.TIMELESS,seed,'device')}
@@ -192,13 +195,15 @@
     $('rerollSceneBtn').addEventListener('click',()=>{state.seeds.scene=randomSeed();render()});
     $('rerollCameraBtn').addEventListener('click',()=>{state.seeds.camera=randomSeed();render()});
     $('rerollFacesBtn').addEventListener('click',()=>{state.seeds.faces=randomSeed();state.subjects.forEach((s,i)=>{if(!s.locked&&s.identitySource==='GENERATED')s.faceSeed=state.seeds.faces+i*9973});render()});
-    $('resetBtn').addEventListener('click',()=>{state=clone(defaults);ensureSubjects();initSelects();document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x.dataset.tab==='natural'));render()});
+    $('resetBtn').addEventListener('click',()=>{state=clone(defaults);ensureSubjects();initSelects();syncGlobalLocks();document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x.dataset.tab==='natural'));render()});
+    document.querySelectorAll('[data-lock-key]').forEach(cb=>cb.addEventListener('change',()=>{const key=cb.dataset.lockKey;if(cb.checked){const current=resolve();state.locks[key]=true;state.lockedResolved[key]=current[key]}else{state.locks[key]=false;delete state.lockedResolved[key]}render()}));
     document.querySelectorAll('[data-tab]').forEach(btn=>btn.addEventListener('click',()=>{state.activeTab=btn.dataset.tab;document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===btn));renderOutput();saveState()}));
     document.querySelector('[data-copy="output"]').addEventListener('click',async e=>{try{await navigator.clipboard.writeText($('output').textContent);const old=e.target.textContent;e.target.textContent='Copied ✓';setTimeout(()=>e.target.textContent=old,1200)}catch{const ta=document.createElement('textarea');ta.value=$('output').textContent;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove()}});
   }
+  function syncGlobalLocks(){document.querySelectorAll('[data-lock-key]').forEach(cb=>cb.checked=!!state.locks?.[cb.dataset.lockKey])}
   function pretty(s){return s.charAt(0).toUpperCase()+s.slice(1).replaceAll('_',' ')}
   function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
   function escapeAttr(s){return escapeHTML(s)}
 
-  initSelects();ensureSubjects();bind();document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x.dataset.tab===state.activeTab));render();
+  initSelects();ensureSubjects();bind();syncGlobalLocks();document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x.dataset.tab===state.activeTab));render();
 })();
