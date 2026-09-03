@@ -3,17 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Amateur Studio Ultimate V5</title>
-  <meta name="description" content="Hybrid amateur photography prompt studio with deterministic scene engine, reference locks, Face DNA and video prompts." />
+  <title>Amateur Studio Ultimate V5.1</title>
+  <meta name="description" content="Hybrid amateur photography prompt studio with adaptive wardrobe, contextual capture resolver, reference locks, Face DNA and silent-first video prompts." />
   <link rel="stylesheet" href="css/app.css" />
-  <style>.lock-strip{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:13px;padding:9px 10px;background:#0d1118;border:1px solid #293242;border-radius:11px}.lock-strip>span{font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#ff8d8d;margin-right:3px}.lock-strip label{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#aeb9c8;background:#141a24;border:1px solid #303a4b;padding:6px 8px;border-radius:8px;cursor:pointer}.lock-strip input{accent-color:#ff5b5b}</style>
+  <style>.lock-strip{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:13px;padding:9px 10px;background:#0d1118;border:1px solid #293242;border-radius:11px}.lock-strip>span{font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#ff8d8d;margin-right:3px}.lock-strip label{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#aeb9c8;background:#141a24;border:1px solid #303a4b;padding:6px 8px;border-radius:8px;cursor:pointer}.lock-strip input{accent-color:#ff5b5b}.subject-actions{gap:8px;flex-wrap:wrap}</style>
 </head>
 <body>
   <header class="topbar">
     <div>
       <div class="eyebrow">AMATEUR REALISM ENGINE</div>
-      <h1>Amateur Studio <span>Ultimate V5</span></h1>
-      <p>Direct flash · phone camera · digicam · analog · Polaroid · candid imperfection</p>
+      <h1>Amateur Studio <span>Ultimate V5.1</span></h1>
+      <p>Adaptive wardrobe · contextual flash · phone camera · digicam · analog · Polaroid · candid imperfection</p>
     </div>
     <div class="top-actions">
       <button id="newSeedBtn" class="btn ghost">↻ Reroll Everything</button>
@@ -73,14 +73,15 @@
     <section class="panel subjects-panel">
       <div class="section-title">
         <div><span class="step">02</span><h2>Subjects / Identity</h2></div>
-        <span class="muted">Reference dikunci per orang, bukan global.</span>
+        <span class="muted">Identity dan reference dikunci per orang; wardrobe otomatis mengikuti konteks.</span>
       </div>
       <div class="reference-note">
-        <b>Aturan reference:</b> tidak memakai istilah “Image A / Image B”. Binding memakai jenis kelamin + descriptor visual bila diperlukan. Subject Generated tidak boleh mewarisi wajah reference.
+        <b>Aturan reference:</b> tidak memakai istilah “Image A / Image B”. Binding memakai jenis kelamin + descriptor visual bila diperlukan. Subject Generated tidak boleh mewarisi wajah reference. Clothing reference hanya dipertahankan bila scope <b>Wardrobe</b> dicentang; jika tidak, pakaian dibuat ulang sesuai era, lokasi, cuaca dan event.
       </div>
       <div id="subjects" class="subject-list"></div>
       <div class="subject-actions">
         <button id="rerollFacesBtn" class="btn">Reroll Generated Faces</button>
+        <button id="rerollWardrobeBtn" class="btn">Reroll Wardrobe</button>
       </div>
     </section>
 
@@ -99,9 +100,7 @@
     <section class="panel output-panel">
       <div class="section-title output-head">
         <div><span class="step">04</span><h2>Canonical Output</h2></div>
-        <div class="output-actions">
-          <button class="btn ghost" data-copy="output">Copy</button>
-        </div>
+        <div class="output-actions"><button class="btn ghost" data-copy="output">Copy</button></div>
       </div>
       <nav class="tabs" aria-label="Output tabs">
         <button data-tab="natural" class="active">Natural</button>
@@ -115,11 +114,12 @@
   </main>
 
   <footer>
-    <span>V5 Hybrid Engine · Deterministic first, AI-enhancer ready</span>
+    <span>V5.1 Hybrid Engine · Adaptive Wardrobe + Contextual Capture Resolver</span>
     <span id="seedLabel"></span>
   </footer>
 
   <script src="js/data.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/wardrobe.js"></script>
+  <script src="js/app-v5.1.js"></script>
 </body>
 </html>
