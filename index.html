@@ -6,6 +6,7 @@
   <title>Amateur Studio Ultimate V5</title>
   <meta name="description" content="Hybrid amateur photography prompt studio with deterministic scene engine, reference locks, Face DNA and video prompts." />
   <link rel="stylesheet" href="css/app.css" />
+  <style>.lock-strip{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:13px;padding:9px 10px;background:#0d1118;border:1px solid #293242;border-radius:11px}.lock-strip>span{font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#ff8d8d;margin-right:3px}.lock-strip label{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#aeb9c8;background:#141a24;border:1px solid #303a4b;padding:6px 8px;border-radius:8px;cursor:pointer}.lock-strip input{accent-color:#ff5b5b}</style>
 </head>
 <body>
   <header class="topbar">
@@ -39,6 +40,17 @@
         <label class="field accent"><span>Camera / Shot</span><select id="shot"></select></label>
         <label class="field accent"><span>Aesthetic DNA</span><select id="aesthetic"></select></label>
         <label class="field"><span>Lighting</span><select id="lighting"></select></label>
+      </div>
+
+      <div class="lock-strip" id="globalLocks">
+        <span>Hard Locks</span>
+        <label><input type="checkbox" data-lock-key="era"> Era</label>
+        <label><input type="checkbox" data-lock-key="region"> Region</label>
+        <label><input type="checkbox" data-lock-key="scene"> Scene</label>
+        <label><input type="checkbox" data-lock-key="device"> Device</label>
+        <label><input type="checkbox" data-lock-key="shot"> Camera</label>
+        <label><input type="checkbox" data-lock-key="aesthetic"> Aesthetic</label>
+        <label><input type="checkbox" data-lock-key="lighting"> Lighting</label>
       </div>
 
       <details class="advanced">
